@@ -2,7 +2,7 @@ from typing import Any
 from django.db.models.query import QuerySet
 from django.shortcuts import render, HttpResponseRedirect, reverse, redirect
 from .models import Reserva, Cliente, Encargado, Complejo, Cabania, Servicio, ReservaServicio
-from .forms import formCabania, formEncargado, formCliente, formComplejo, formServicio, formReserva
+from .forms import formCabania, formEncargado, formCliente, formComplejo, formServicio, formReserva, formReservaServicio
 from django.views.generic import  CreateView, UpdateView, DeleteView, ListView
 from django.urls import reverse_lazy
 from django.db.models import Q
@@ -12,10 +12,19 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import date
 from django.contrib.auth import logout
 from django.http import HttpResponse
+from django.forms import inlineformset_factory
 
 # Create your views here.
 
 def main(request):
+    """
+    Vista principal que recupera información de la base de datos para mostrar en la plantilla 'main.html'.
+
+    Obtiene todos los objetos de las diferentes tablas de la base de datos para mostrar en la página principal.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'main.html' con el contexto que contiene los datos recuperados.
+    """
     reservas = Reserva.objects.all()
     clientes = Cliente.objects.all()
     encargados = Encargado.objects.all()
@@ -36,6 +45,22 @@ def main(request):
 
 
 def detalle_cliente(request, cliente_id):
+    """
+    Vista que muestra los detalles de un cliente específico identificado por su ID.
+
+    Recupera y muestra los detalles de un cliente, identificado por el parámetro cliente_id, 
+    incluyendo todos los atributos disponibles del cliente.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        cliente_id (int): El ID del cliente del cual se mostrarán los detalles.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'detalle_cliente.html' con el contexto que contiene los detalles del cliente.
+    
+    Raises:
+        Cliente.DoesNotExist: Si el cliente con el ID proporcionado no existe en la base de datos.
+    """
     cliente = Cliente.objects.get(id=cliente_id) #solo toma el id del cliente         #toma todos los atributos del cliente
 
     context = {
@@ -43,7 +68,24 @@ def detalle_cliente(request, cliente_id):
     }
     return render(request, 'detalle_cliente.html', context)
 
+
 def detalle_encargado(request, encargado_id):
+    """
+    Vista que muestra los detalles de un encargado específico identificado por su ID.
+
+    Recupera y muestra los detalles de un encargado, identificado por el parámetro encargado_id, 
+    incluyendo todos los atributos disponibles del encargado.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        encargado_id (int): El ID del encargado del cual se mostrarán los detalles.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'detalle_encargado.html' con el contexto que contiene los detalles del encargado.
+    
+    Raises:
+        Encargado.DoesNotExist: Si el encargado con el ID proporcionado no existe en la base de datos.
+    """
     encargado = Encargado.objects.get(id=encargado_id)
 
     context={
@@ -51,7 +93,24 @@ def detalle_encargado(request, encargado_id):
     }
     return render(request,'detalle_encargado.html', context)
 
+
 def detalle_complejo(request, complejo_id):
+    """
+    Vista que muestra los detalles de un complejo específico identificado por su ID.
+
+    Recupera y muestra los detalles de un complejo, identificado por el parámetro complejo_id, 
+    incluyendo todos los atributos disponibles del complejo.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        complejo_id (int): El ID del complejo del cual se mostrarán los detalles.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'detalle_complejo.html' con el contexto que contiene los detalles del complejo.
+    
+    Raises:
+        Complejo.DoesNotExist: Si el complejo con el ID proporcionado no existe en la base de datos.
+    """
     complejo = Complejo.objects.get(id=complejo_id)
 
     context = {
@@ -59,7 +118,24 @@ def detalle_complejo(request, complejo_id):
     }
     return render(request, 'detalle_complejo.html', context)
 
+
 def detalle_cabania(request, cabania_id):
+    """
+    Vista que muestra los detalles de una cabaña específica identificada por su ID.
+
+    Recupera y muestra los detalles de una cabaña, identificada por el parámetro cabania_id, 
+    incluyendo todos los atributos disponibles de la cabaña.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        cabania_id (int): El ID de la cabaña de la cual se mostrarán los detalles.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'detalle_cabania.html' con el contexto que contiene los detalles de la cabaña.
+    
+    Raises:
+        Cabania.DoesNotExist: Si la cabaña con el ID proporcionado no existe en la base de datos.
+    """
     cabania = Cabania.objects.get(id=cabania_id)
 
     context = {
@@ -68,32 +144,44 @@ def detalle_cabania(request, cabania_id):
     return render(request, 'detalle_cabania.html', context)
 
 def detalle_reserva(request, reserva_id):
+    """
+    Vista que muestra los detalles de una reserva específica identificada por su ID.
+
+    Recupera y muestra los detalles de una reserva, identificada por el parámetro reserva_id, 
+    incluyendo el cálculo del precio total de la reserva, considerando el precio de la cabaña y servicios asociados.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        reserva_id (int): El ID de la reserva de la cual se mostrarán los detalles.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'detalle_reserva.html' con el contexto que contiene los detalles de la reserva.
+    
+    Raises:
+        Reserva.DoesNotExist: Si la reserva con el ID proporcionado no existe en la base de datos.
+    """
+
+    #obtener la reservas especifica por su ID
     reserva = Reserva.objects.get(id=reserva_id)
 
-
+    #calculo de detalles de la reserva
     cabania = reserva.cabania.precio
-
     entrada = reserva.diaEntrada #dia entrada
     salida = reserva.diaSalida  #dia salida
-
     cantidad_dias = (salida - entrada).days #calculo de la diferencia entre dia de entrada y salida
-
     total_cabania = cabania * cantidad_dias #calculo entre el precio de la cabaña y la cantidad de dias
-
     total_servicios = 0 #calculo sobre el total de servicios
-
-
-    total_servicios = 0
     reserva_servicios = ReservaServicio.objects.filter(reserva=reserva)
 
     # Iterar sobre cada formulario en el formset
     for reserva_servicio in reserva_servicios:
         servicio = reserva_servicio.servicio
         total_servicios += servicio.precio
-        
 
-        total_reserva = total_cabania + total_servicios #calculo sobre el total de la reserva
-        print(total_servicios)
+    total_servicios = total_servicios * cantidad_dias
+
+    total_reserva = total_cabania + total_servicios #calculo sobre el total de la reserva
+    print(total_servicios, total_reserva)
 
     context = {
             'reserva': reserva,
@@ -105,10 +193,24 @@ def detalle_reserva(request, reserva_id):
             'total_servicios': total_servicios
         }
 
-
     return render(request, 'detalle_reserva.html', context)
 
 def detalle_servicio(request, servicio_id):
+    """
+    Vista que muestra los detalles de un servicio específico identificado por su ID.
+
+    Recupera y muestra los detalles de un servicio, identificado por el parámetro servicio_id.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        servicio_id (int): El ID del servicio del cual se mostrarán los detalles.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'detalle_servicio.html' con el contexto que contiene los detalles del servicio.
+    
+    Raises:
+        Servicio.DoesNotExist: Si el servicio con el ID proporcionado no existe en la base de datos.
+    """
     servicio = Servicio.objects.get(id=servicio_id)
 
     context = {
@@ -119,6 +221,18 @@ def detalle_servicio(request, servicio_id):
 #VISTAS ENCARGADO
 
 class lista_encargados(LoginRequiredMixin, ListView):
+    """
+    Vista basada en clase que muestra una lista paginada de encargados.
+
+    Permite filtrar la lista de encargados por nombre/apellido o número de DNI.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Encargado): Modelo utilizado para obtener los datos de la lista.
+        template_name (str): Nombre de la plantilla utilizada para renderizar la vista.
+        context_object_name (str): Nombre del objeto de contexto utilizado en la plantilla.
+        paginate_by (int): Número de elementos por página para la paginación.
+    """
     login_url = '/login/'
     model = Encargado
     template_name = 'lista_encargados.html'
@@ -126,6 +240,12 @@ class lista_encargados(LoginRequiredMixin, ListView):
     paginate_by = 10
 
     def get_queryset(self):
+        """
+        Obtiene la lista de encargados filtrada según el parámetro de búsqueda.
+
+        Returns:
+            QuerySet: Lista filtrada de encargados según la consulta de búsqueda.
+        """
         query = self.request.GET.get('q','')
         encargados = Encargado.objects.filter(
             Q(apellido_nombre__icontains=query) |
@@ -134,6 +254,18 @@ class lista_encargados(LoginRequiredMixin, ListView):
         return encargados
 
 class nuevo_encargado(LoginRequiredMixin, CreateView):
+    """
+    Vista basada en clase para crear un nuevo encargado.
+
+    Permite a los usuarios crear un nuevo encargado proporcionando un formulario predefinido.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Encargado): Modelo utilizado para crear una nueva instancia de encargado.
+        form_class (formEncargado): Formulario utilizado para la creación del encargado.
+        template_name (str): Nombre de la plantilla utilizada para renderizar el formulario.
+        success_url (str): URL a la que se redirige después de que se crea un nuevo encargado con éxito.
+    """
     login_url = '/login/'
     model = Encargado
     form_class = formEncargado
@@ -141,6 +273,18 @@ class nuevo_encargado(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('lista_encargados')
 
 class modif_encargado(LoginRequiredMixin, UpdateView):
+    """
+    Vista basada en clase para modificar un encargado existente.
+
+    Permite a los usuarios modificar un encargado existente proporcionando un formulario predefinido.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Encargado): Modelo utilizado para modificar la instancia de encargado existente.
+        form_class (formEncargado): Formulario utilizado para la modificación del encargado.
+        template_name (str): Nombre de la plantilla utilizada para renderizar el formulario.
+        success_url (str): URL a la que se redirige después de que se modifica el encargado con éxito.
+    """
     login_url = '/login/'
     model = Encargado
     form_class = formEncargado
@@ -186,6 +330,17 @@ class modif_cabania(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('lista_cabanias')
 
 class borrar_cabania(LoginRequiredMixin, DeleteView):
+    """
+    Vista basada en clase para eliminar un encargado existente.
+
+    Permite a los usuarios eliminar un encargado existente utilizando una confirmación.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Encargado): Modelo utilizado para eliminar la instancia de encargado existente.
+        template_name (str): Nombre de la plantilla utilizada para confirmar la eliminación del encargado.
+        success_url (str): URL a la que se redirige después de eliminar con éxito el encargado.
+    """
     login_url = '/login/'
     model = Cabania
     template_name = 'conf_borrar_cabania.html'
@@ -320,12 +475,38 @@ class lista_reservas(LoginRequiredMixin, ListView):
         return reservas
     
 def obtener_id_cliente(apellido_nombre):
+    """
+    Obtiene el ID de un cliente dado su apellido y nombre.
+
+    Args:
+        apellido_nombre (str): Apellido y nombre del cliente a buscar.
+
+    Returns:
+        int or None: El ID del cliente si se encuentra, de lo contrario, retorna None.
+    """
     try:
         cliente = Cliente.objects.get(apellido_nombre=apellido_nombre)
         return cliente.id
     except Cliente.DoesNotExist:
         return None
 class nuevo_reserva(LoginRequiredMixin, CreateView):
+    """
+    Vista para crear una nueva reserva.
+
+    Permite crear una nueva reserva y asociar servicios a esta reserva.
+
+    Attributes:
+        login_url (str): URL para redirigir a la página de inicio de sesión.
+        model (class): Clase del modelo asociado a la vista.
+        form_class (class): Clase del formulario para la vista.
+        template_name (str): Nombre de la plantilla HTML utilizada para renderizar la vista.
+        success_url (str): URL a la que redirigir después de completar con éxito la acción.
+
+    Methods:
+        get_context_data(self, **kwargs): Obtiene el contexto para la vista.
+        form_valid(self, form): Valida el formulario enviado por el usuario.
+        total(self, reserva_id): Calcula el total de la reserva dada su ID.
+    """
     login_url = '/login/'
     model = Reserva
     form_class = formReserva
@@ -333,6 +514,12 @@ class nuevo_reserva(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('lista_reservas')
 
     def get_context_data(self, **kwargs):
+        """
+        Obtiene el contexto para la vista.
+
+        Returns:
+            dict: Diccionario con el contexto de la vista.
+        """
         context = super().get_context_data(**kwargs)
         if self.request.POST:
             context['formset'] = formReserva.ReservaServicioFormset(self.request.POST)
@@ -341,19 +528,18 @@ class nuevo_reserva(LoginRequiredMixin, CreateView):
 
         return context
 
-        
-    def total_servicios(self):
-        total_servicios = 0
-        formset = formReserva.ReservaServicioFormset(data=self.request.POST)
-        if formset.is_valid():
-            for form in formset:
-                servicio_id = form.cleaned_data.get('servicio')
-                if servicio_id:
-                    servicio = Servicio.objects.get(id=servicio_id)
-                    total_servicios += servicio.precio
-        return total_servicios
     
     def form_valid(self, form):
+        """
+        Valida el formulario enviado por el usuario.
+
+        Args:
+            form (object): Formulario enviado por el usuario.
+
+        Returns:
+            HttpResponseRedirect: Redirige a la URL de éxito si el formulario es válido, 
+            de lo contrario, muestra el formulario con errores.
+        """
         cliente_apellido_nombre = form.cleaned_data.get('cliente_apellido_nombre')
         cliente = Cliente.objects.filter(apellido_nombre=cliente_apellido_nombre).first()
     
@@ -362,7 +548,11 @@ class nuevo_reserva(LoginRequiredMixin, CreateView):
             reserva.cliente = cliente
             reserva.save()
 
-            total_servicios = self.total_servicios()
+            ReservaServicioFormSet = inlineformset_factory(Reserva, ReservaServicio, form=formReservaServicio, extra=1)
+            formset = ReservaServicioFormSet(self.request.POST, instance=reserva)
+            
+            if formset.is_valid():
+                formset.save()
 
             return super().form_valid(form)
         else:
@@ -370,27 +560,40 @@ class nuevo_reserva(LoginRequiredMixin, CreateView):
             return self.form_invalid(form)
 
     def total(self):
+        """
+        Calcula el total de una reserva dado su ID.
+
+        Args:
+            reserva_id (int): ID de la reserva para calcular su total.
+
+        Returns:
+            dict: Diccionario con los detalles del cálculo del total de la reserva, 
+            incluyendo la reserva, el costo de la cabaña, la cantidad de días, 
+            el total por cabaña y el total por servicios.
+        """
         reserva = Reserva.objects.get(pk=id)
         cabania = reserva.cabania.precio
         entrada = reserva.diaEntrada
         salida = reserva.diaSalida
 
         cantidad_dias = (salida - entrada).days 
-
-        total_cabania = cabania * 2
-
-        total_servicios = 0
+        total_cabania = cabania * cantidad_dias
 
         formset = formReserva.ReservaServicioFormset(data=self.request.POST)
+        total_servicios = 0
 
-                # Iterar sobre cada formulario en el formset
-        for servicio_form in formset.forms:
-            servicio_id = servicio_form.cleaned_data.get('servicio')
-            
-            # Verificar si se seleccionó un servicio
-            if servicio_id:
-                servicio = Servicio.objects.get(id=servicio_id)
-                total_servicios += servicio.precio
+        if formset.is_valid():
+            for servicio_form in formset.forms:
+                servicio_id = servicio_form.cleaned_data.get('servicio')
+                
+                # Verificar si se seleccionó un servicio
+                if servicio_id:
+                    try:
+                        servicio = Servicio.objects.get(id=servicio_id)
+                        total_servicios += servicio.precio
+                    except Servicio.DoesNotExist:
+                        # Manejar el caso en el que el servicio no existe
+                        pass
 
         context = {
             'reserva': reserva,
@@ -401,14 +604,40 @@ class nuevo_reserva(LoginRequiredMixin, CreateView):
         }
 
         return context
+
         
 class modif_reserva(LoginRequiredMixin, UpdateView):
+    """
+    Vista para modificar una reserva existente.
+
+    Permite actualizar una reserva y los servicios asociados a esta reserva.
+
+    Attributes:
+        login_url (str): URL para redirigir a la página de inicio de sesión.
+        model (class): Clase del modelo asociado a la vista.
+        form_class (class): Clase del formulario para la vista.
+        template_name (str): Nombre de la plantilla HTML utilizada para renderizar la vista.
+        success_url (str): URL a la que redirigir después de completar con éxito la acción.
+
+    Methods:
+        get_initial(self): Obtiene los datos iniciales para el formulario de la vista.
+        get_context_data(self, **kwargs): Obtiene el contexto para la vista.
+        form_valid(self, form): Valida el formulario enviado por el usuario.
+        total(self): Calcula los totales relacionados con la reserva.
+    """
+    login_url = '/login/'
     model = Reserva
     form_class = formReserva
     template_name = 'form_reserva.html'
     success_url = reverse_lazy('lista_reservas')
 
     def get_initial(self):
+        """
+        Obtiene los datos iniciales para el formulario de la vista.
+
+        Returns:
+            dict: Diccionario con los datos iniciales para el formulario.
+        """
         initial = super().get_initial()
         reserva = self.get_object()
         if reserva.cliente:
@@ -416,9 +645,13 @@ class modif_reserva(LoginRequiredMixin, UpdateView):
         return initial
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        """
+        Obtiene el contexto para la vista.
 
-        
+        Returns:
+            dict: Diccionario con el contexto de la vista.
+        """
+        context = super().get_context_data(**kwargs)
         total_context = self.total()
         context.update(total_context)
 
@@ -429,6 +662,16 @@ class modif_reserva(LoginRequiredMixin, UpdateView):
         return context
 
     def form_valid(self, form):
+        """
+        Valida el formulario enviado por el usuario.
+
+        Args:
+            form (object): Formulario enviado por el usuario.
+
+        Returns:
+            HttpResponseRedirect: Redirige a la URL de éxito si el formulario es válido, 
+            de lo contrario, muestra el formulario con errores.
+        """
         context = self.get_context_data()
         formset = context['formset']
 
@@ -449,6 +692,14 @@ class modif_reserva(LoginRequiredMixin, UpdateView):
 
         
     def total(self):
+        """
+        Calcula los totales relacionados con la reserva.
+
+        Returns:
+            dict: Diccionario con los detalles del cálculo de totales de la reserva, 
+            incluyendo la reserva, el costo de la cabaña, la cantidad de días, 
+            el total por cabaña, el total por servicios y el total de la reserva.
+        """
         reserva = self.object
         cabania = reserva.cabania.precio
 
@@ -496,7 +747,7 @@ class borrar_reserva(LoginRequiredMixin, DeleteView):
     template_name = 'conf_borrar_reserva.html'
     success_url = reverse_lazy('lista_reservas')
 
-
+'''
 class DetalleReservaServicio(LoginRequiredMixin, ListView):
     model = ReservaServicio
     template_name = 'servicios-reserva.html'
@@ -507,9 +758,20 @@ class DetalleReservaServicio(LoginRequiredMixin, ListView):
         # Filtrar los objetos ReservaServicio relacionados con la reserva específica
         queryset = ReservaServicio.objects.filter(reserva_id=reserva_id)
         return queryset 
-    
+'''
     
 def Logout(request):
+    """
+    Función para cerrar la sesión de un usuario.
+
+    Realiza el proceso de cierre de sesión en Django y redirige al usuario a la página de inicio.
+
+    Args:
+        request (HttpRequest): Objeto de solicitud HTTP.
+
+    Returns:
+        HttpResponseRedirect: Redirige al usuario a la página de inicio.
+    """
     logout(request)
     return redirect('/')
 
@@ -690,10 +952,26 @@ def factura(request, reserva_id):
 from django.http import JsonResponse
 
 def search_clients(request):
+    """
+    Vista para buscar clientes mediante una solicitud AJAX.
+
+    Se espera una solicitud XMLHttpRequest con un término de búsqueda 'term' en los parámetros GET.
+    Retorna una lista JSON de nombres de clientes que coinciden con el término de búsqueda.
+
+    Args:
+        request (HttpRequest): Objeto de solicitud HTTP.
+
+    Returns:
+        JsonResponse: Lista JSON de nombres de clientes que coinciden con el término de búsqueda.
+    """
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        # Obtiene el término de búsqueda del parámetro GET 'term'
         q = request.GET.get('term', '')
+        # Filtra los clientes cuyos nombres o apellidos coincidan con el término de búsqueda
         clients = Cliente.objects.filter(apellido_nombre__icontains=q)
+        # Crea una lista de nombres de clientes que coinciden con el término de búsqueda
         results = [client.apellido_nombre for client in clients]
+        # Retorna una respuesta JSON con la lista de nombres de clientes
         return JsonResponse(results, safe=False)
 
 

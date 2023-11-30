@@ -69,6 +69,7 @@ class formReservaServicio(forms.ModelForm):
             'servicio': forms.Select(attrs={'class': 'form-select'}),
         }
 
+
 class formReserva(forms.ModelForm):
 
     cliente_apellido_nombre = forms.CharField(
