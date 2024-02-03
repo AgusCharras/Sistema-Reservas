@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -59,6 +60,20 @@ class Reserva(models.Model):
 
     def __str__(self):
         return self.cliente.apellido_nombre
+    
+    def clean(self):
+        # Llamamos al método clean de la clase padre para mantener las validaciones predeterminadas
+        super().clean()
+
+        # Verificamos si hay reservas existentes con la misma cabaña y fechas superpuestas
+        reservas_superpuestas = Reserva.objects.filter(
+            cabania=self.cabania,
+            diaEntrada__lte=self.diaSalida,
+            diaSalida__gte=self.diaEntrada
+        ).exclude(id=self.id)  # Excluimos la reserva actual si ya existe
+
+        if reservas_superpuestas.exists():
+            raise ValidationError('Ya hay una reserva existente para esta cabaña en estas fechas.')
     
 
 class ReservaServicio(models.Model):

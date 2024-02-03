@@ -2,22 +2,24 @@
 {% load static %} 
 {% block content %}
 
-<div class="contenedorForm">
+<div class="contenedor1">
+<section class="contenedorFormReserva">
 
-    <div class="formulario">
+    <div class="formReserva">
 
-        <div class="row">
-            <h1 class="titulo">Reservas</h1>
+            <h1 class="titulo">Reserva</h1> 
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{form.as_p}}
 
                 {{ formset.management_form }}
-                
-                <h3>Servicios</h3>
+    </div>
 
-                <table class="table table-striped table-hover">
-                    <thead class="bg-dark text-light">
+    <div class="setformServicio">
+                <h1>Servicios</h1>
+
+                <table class="table table-striped table-hover" id="results">
+                    <thead>
                         <th>Id</th>
                         <th></th><th></th><th></th>
                         <th>¿Borrar?</th>
@@ -33,10 +35,10 @@
                     {% endfor %}
                     </tbody>
                 </table>
+    </div>
 
-                <div class="totales">
-                    <h3>Totales</h3>
-
+    <div class="totales">
+                    <h1>Totales</h1>
                     <p><strong>Precio Cabaña: </strong> {{ reserva.cabania.precio}}</p>
                     <p><strong>Cantidad Dias: </strong>{{ cantidad_dias }}</p>
                     <p><strong>Total Cabaña: </strong>{{ total_cabania }}</p>
@@ -44,19 +46,16 @@
                     <p><strong>Total Servicios x reserva: </strong>{{ total_servicios_reserva}}</p>
                     
                     <div><p><strong>Total Reserva: </strong>{{total_reserva}}</p></div>
-                </div>
-
-                <div class="contenedorBotones">
-                    <button class="botonSecundario" type="submit">Guardar</button>
-                    <a class="botonSecundario" href="{% url 'lista_reservas' %}">Cancelar</a>
-                </div>
-
-            </form>
-        </div>
-
     </div>
 
-</div>
+    <div class="contenedorBotones1">
+        <button class="botonSecundario" type="submit">Guardar</button>
+        <a class="botonSecundario" href="{% url 'lista_reservas' %}">Cancelar</a>
+    </div>
+
+                </form>
+
+</section>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -68,6 +67,6 @@
         source: "{% url 'search_clients' %}",
     });
 </script>
-
+</div>
 
 {% endblock %} 

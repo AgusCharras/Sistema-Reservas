@@ -48,4 +48,8 @@ urlpatterns = [
     path('reservas/reservas/<int:reserva_id>/factura/', views.factura, name='factura'),
 
     path('search_clients/', views.search_clients, name='search_clients'),
+
+    path('cabanias/disponibilidad/<int:cabania_id>/', views.disponibilidad_cabania, name='disponibilidad'),
+    path('complejo/disponibilidad/<int:complejo_id>/', views.disponibilidad_complejo, name='disponibilidad')
+
 ]

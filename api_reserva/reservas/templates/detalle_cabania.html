@@ -9,6 +9,11 @@
         <p><strong>Capacidad: </strong>{{ cabania.capacidad }}</p>
         <p><strong>Precio: </strong>{{ cabania.precio }}</p>
         <p><strong>Complejo: </strong>{{ cabania.complejo }}</p>
+
+        <div class="contenedorBotones">
+            <a class="botonPrimario" href="{% url 'disponibilidad' cabania.id %}" >Disponibilidad</a>
+            <a class="botonPrimario" href="">Reservar</a>
+        </div>
     </div>
 </div>
 {% endblock %}

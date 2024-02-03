@@ -38,23 +38,32 @@
 
 html,
 body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  background-color: var(--color-white); /* Aquí puedes definir tu color de fondo */
-}
-
-.contendorTodo{
+    margin: 0;
+    padding: 0;
     height: 100%;
     width: 100%;
-    background-color: var(--color-white);
+    background-color: var(--color-background); /* Aquí puedes definir tu color de fondo */
 }
 
 .contenedor{
-    background-color: var(--color-white);
-    height: 100vh;
-    width: 100%;
+    min-height: 100%;
+    min-width: 100%;
+    background-color: var(--color-background);
+    overflow-y: auto;
 }
+
+.contenedor1{
+    height: 100%;
+    background-color: var(--color-background);
+}
+
+.contenedor2{
+    min-height: 100%;
+    min-width: 100%;
+    background-color: var(--color-background);
+    overflow-y: auto;
+}
+
 
 /* textos */
 
@@ -78,9 +87,13 @@ body {
     background-color: #9381ff;
 }
 
+.navbar-toggler{
+    color: var(--color-primary);
+}
+
 .navbar-toggler span{
     font-size: 1rem;
-    color: var(--color-dark);
+    color: var(--color-primary);
 }
 
 header{
@@ -214,6 +227,17 @@ header span{
 
 /* tablas */
 
+h1 a{
+    text-decoration: none;
+    color: var(--color-dark);
+    transition: ease 0.3s;
+}
+
+h1 a:hover{
+    text-decoration: none;
+    color: var(--color-primary);
+}
+
 .thead{
     background-color: #9381ff;
     color: #ffffff;
@@ -287,6 +311,38 @@ table a:hover{
     background-color: var(--color-background);
 }
 
+.contenedorFormReserva{
+    width: 100%;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    background-color: var(--color-background);
+    padding-top: 1rem;
+}
+
+.setformServicio{
+    width: 31.25rem;
+}
+
+.formReserva{
+    width: 40rem;
+    height: 36.25rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.formReserva h1{
+    color: var(--color-dark);
+    text-align: center;
+}
+
+.setformServicio h1{
+    color: var(--color-dark);
+    text-align: center;
+}
+
 .formulario{
     position: relative;
     top: 2rem;
@@ -303,7 +359,7 @@ p{
 }
 
 
-.formulario .row h1{
+.formulario h1{
     color: var(--color-dark);
     font-family: 'poppins', sans-serif;
     text-align: center;
@@ -314,21 +370,27 @@ p{
     color: var(--color-dark);
 }
 
-.formulario 
 
 .contenedorBotones{
+    width: 100%;
     margin: auto;
-    width: 14rem;
-    padding-bottom: 1rem
+    top: 0;
+    display: flex;
+    justify-content: center;
 }
 
-.contenedorBotones .botonSecundario{
-    margin: auto;
+.contenedorBotones1{
+    display: flex;
+    justify-content: center;
+    height: 3rem;
+    width: 100%;
+    background-color: var(--color-background);
 }
 
 h3{
     font-family: 'poppins', sans-serif;
     text-align: center;
+    color: var(--color-dark);
 }
 
 /*confirmacion para eliminar un objeto */
@@ -376,18 +438,16 @@ h3{
 /* totales */
 
 .totales{
-    width: 70%;
-    height:45vh;
-    margin: auto;
-    margin-top: 2rem;
-    background-color: var(--color-white);
+    width: 30rem;
+    height:30rem;
+    border: var(--color-white);
     border-radius: 2.5rem;
     box-shadow: 0.05rem 0.05rem 4rem var(--color-background);
     transition: ease 0.5s;
 }
 
-.totales h3{
-    padding-top: 1rem;
+.totales h1{
+    text-align: center;
     color: var(--color-primary);
 }
 
@@ -508,6 +568,24 @@ h3{
     text-shadow:0.05rem 0.05rem 2rem #e16f7c;
 }
 
+/* calendario */
+
+#calendario{
+    background-color: var(--color-background);
+    height: 50rem;
+}
+
+.fc-h-event .fc-event-title-container{
+    background-color: var(--color-danger);
+    border: none;
+}
+
+.fc-h-event .fc-event-title-container :hover{
+    background-color: var(--color-primary);
+}
+.fc-day .fc-day-today{
+    background-color: var(--color-danger);
+}
 /* boton dark mode */
 
 #botonDarkMode{
@@ -517,6 +595,11 @@ h3{
 
 #botonDarkMode :hover{
     box-shadow: 1rem 1rem 1rem #9381ff;
+}
+
+#results{
+    max-width: 100%;
+    overflow: auto;
 }
 
 body.dark-mode-variables #results {
@@ -638,11 +721,54 @@ body.dark-mode-variables #results th, body.dark-mode-variables #results td {
     width: 100%; /* Asegura que la tabla ocupe todo el ancho disponible */
 }
 
+@media screen and (max-width: 1490px){
+
+    .formReserva{
+        width: 25rem;
+    }
+
+    .setformServicio{
+        width: 25rem;
+    }
+
+    .totales{
+        width: 30rem;
+    }
+}
+
 @media screen and (max-width: 1280px){
 
 
     .contenedorCard{
         justify-content: space-evenly;
         align-items: center;
+    }
+
+    .formReserva{
+        width: 20rem;
+    }
+
+    .setformServicio{
+        width: 20rem;
+    }
+
+    .totales{
+        width: 20rem;
+    }
+}
+
+@media screen and (max-width:720px){
+
+    .formReserva{
+        margin: auto;
+    }
+
+    .setformServicio{
+        margin: auto;
+    }
+
+    .totales{
+        width: 20rem;
+        height: 20rem;
     }
 }

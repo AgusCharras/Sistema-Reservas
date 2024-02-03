@@ -8,6 +8,11 @@
         <h2>{{  complejo.nombre }}</h2>
         <p><strong>Direccion: </strong> {{ complejo.direccion}}</p>
         <p><strong>Encargado: </strong> {{ complejo.encargado}}</p>
+
+        <div class="contenedorBotones">
+            <a class="botonPrimario" href="{% url 'disponibilidad' complejo.id %}" >Disponibilidad</a>
+            <a class="botonPrimario" href="">Reservar</a>
+        </div>
     </div>
 </div>
 {% endblock %}

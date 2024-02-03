@@ -467,10 +467,11 @@ class lista_reservas(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         query = self.request.GET.get('q', '')
+        order_by = self.request.GET.get('order_by', 'id')
         reservas = Reserva.objects.filter(
             Q(cliente__apellido_nombre__icontains=query) |  # Búsqueda por nombre del cliente
             Q(cliente__dni__icontains=query)             # Búsqueda por DNI del cliente
-        )
+        ).order_by(order_by)
 
         return reservas
     
@@ -747,6 +748,16 @@ class borrar_reserva(LoginRequiredMixin, DeleteView):
     template_name = 'conf_borrar_reserva.html'
     success_url = reverse_lazy('lista_reservas')
 
+
+def disponibilidad_cabania(request, cabania_id):
+    reservas = Reserva.objects.filter(cabania_id=cabania_id)
+
+    return render(request, 'disponibilidad_cabania.html',{'reservas': reservas})
+
+def disponibilidad_complejo(request, complejo_id):
+    reservas = Reserva.objects.filter(complejo_id=complejo_id)
+
+    return render(request, 'disponibilidad_complejo.html',{'reservas': reservas})
 '''
 class DetalleReservaServicio(LoginRequiredMixin, ListView):
     model = ReservaServicio
@@ -774,95 +785,6 @@ def Logout(request):
     """
     logout(request)
     return redirect('/')
-
-'''
-from reportlab.pdfbase import pdfmetrics
-from django.http import FileResponse
-import io
-from reportlab.pdfgen import canvas
-from reportlab.lib.units import inch
-from reportlab.lib.pagesizes import A4
-from django.shortcuts import get_object_or_404
-from reportlab.pdfbase.ttfonts import TTFont
-
-def draw_header(c):
-    # Aquí puedes dibujar el contenido del encabezado
-    c.setFont("Poppins", 16)
-    c.drawString(inch, 10 * inch, "Nombre de tu Empresa")
-    # Otros elementos del encabezado...
-
-def factura(request, reserva_id):
-    reserva = get_object_or_404(Reserva, id=reserva_id)
-
-    buf = io.BytesIO()
-    c = canvas.Canvas(buf, pagesize=A4, bottomup=0)
-
-    pdfmetrics.registerFont(TTFont('Poppins', 'reservas/static/fonts/Poppins-Regular.ttf'))
-
-    c.setFont("Poppins", 12)
-    line_height = 14
-    left_margin = inch
-    top_margin = inch * 10
-
-    draw_header(c)
-
-    c.drawString(left_margin, top_margin, "Factura")
-    top_margin -= line_height * 2
-
-    c.drawString(left_margin, top_margin, f"Cliente: {reserva.cliente}")
-    top_margin -= line_height
-    c.drawString(left_margin, top_margin, f"Complejo: {reserva.complejo}")
-    top_margin -= line_height
-    c.drawString(left_margin, top_margin, f"Cabaña: {reserva.cabania}")
-    top_margin -= line_height * 2
-
-    c.drawString(left_margin, top_margin, "Detalles:")
-    top_margin -= line_height
-
-    cabania = reserva.cabania.precio
-    entrada = reserva.diaEntrada
-    salida = reserva.diaSalida
-    cantidad_dias = (salida - entrada).days
-    total_cabania = cabania * cantidad_dias
-    total_servicios = 0
-    reserva_servicios = ReservaServicio.objects.filter(reserva=reserva)
-
-    # Iterar sobre cada formulario en el formset
-    for reserva_servicio in reserva_servicios:
-        servicio = reserva_servicio.servicio
-        total_servicios += servicio.precio
-        
-
-        total_reserva = total_cabania + total_servicios #calculo sobre el total de la reserva
-
-    total_servicios_reserva = total_servicios * cantidad_dias
-    total_reserva = total_cabania + total_servicios_reserva
-    
-    detalles = [
-        f"Día de Entrada: {reserva.diaEntrada}",
-        f"Día de Salida: {reserva.diaSalida}",
-        f"Seña: {reserva.seña}",
-        f"total servicios de la reserva: {total_servicios_reserva}",
-        f"total servicios por dia: {total_servicios} ",
-        f"total reserva: {total_reserva}"
-    ]
-
-    for detalle in detalles:
-        c.drawString(left_margin, top_margin, detalle)
-        top_margin -= line_height
-
-    c.line(left_margin, top_margin, inch + 500, top_margin)
-    top_margin -= line_height * 2
-
-
-    c.drawString(left_margin, top_margin, f"Total: {total_reserva}")
-
-    c.showPage()
-    c.save()
-    buf.seek(0)
-
-    return FileResponse(buf, as_attachment=True, filename=f'reserva{reserva_id}_factura.pdf')
-'''
 
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
