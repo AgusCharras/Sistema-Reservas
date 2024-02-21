@@ -1,0 +1,38 @@
+{% include 'navbar.html' %} 
+{% load static %} 
+{% block content %}
+
+<div class="contenedor">
+
+    <form class="fechas" method="post" action="{% url 'cabanias_disponibles' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="fecha_entrada">Fecha de entrada:</label>
+            <input type="date" id="fecha_entrada" name="fecha_entrada">
+        </div>
+        <div class="form-group">
+            <label for="fecha_salida">Fecha de salida:</label>
+            <input type="date" id="fecha_salida" name="fecha_salida">
+        </div>
+        <div class="form-group">
+            <input class="botonFecha" type="submit" value="Ver disponibilidad">
+        </div>
+    </form>
+
+<div class="cabanias_disponibles">
+    {% if cabañas_disponibles %}
+        <h2>Cabañas Disponibles del {{ fecha_entrada }} al {{ fecha_salida }}:</h2>
+        <ul>
+            {% for cabaña in cabañas_disponibles %}
+            {% if cabaña.id %}
+                <li><a href="{% url 'detalle_cabania' cabaña.id %}">{{ cabaña.nombre }}</a></li>
+            {% endif %}
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay cabañas disponibles para las fechas seleccionadas.</p>
+    {% endif %}
+</div>
+
+</div>
+{% endblock %} 

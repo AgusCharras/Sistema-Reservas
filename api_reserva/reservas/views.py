@@ -12,6 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import date
 from django.contrib.auth import logout
 from django.http import HttpResponse
+from datetime import datetime
 from django.forms import inlineformset_factory
 
 # Create your views here.
@@ -758,6 +759,32 @@ def disponibilidad_complejo(request, complejo_id):
     reservas = Reserva.objects.filter(complejo_id=complejo_id)
 
     return render(request, 'disponibilidad_complejo.html',{'reservas': reservas})
+
+def cabanias_disponibles(request):
+    if request.method == 'POST':
+        fecha_entrada_str = request.POST.get('fecha_entrada')
+        fecha_salida_str = request.POST.get('fecha_salida')
+
+        # Validar que las fechas no estén vacías
+        if fecha_entrada_str and fecha_salida_str:
+            fecha_entrada = datetime.strptime(fecha_entrada_str, '%Y-%m-%d').date()
+            fecha_salida = datetime.strptime(fecha_salida_str, '%Y-%m-%d').date()
+
+            # Lógica para encontrar cabañas disponibles
+            cabañas_disponibles = Cabania.objects.filter(
+                ~Q(id__in=Reserva.objects.filter(
+                    diaEntrada__lte=fecha_salida,
+                    diaSalida__gte=fecha_entrada
+                ).values('cabania_id'))
+            )
+
+            return render(request, 'lista_disponibilidad.html', {'cabañas_disponibles': cabañas_disponibles,
+                                                                  'fecha_entrada': fecha_entrada,
+                                                                  'fecha_salida': fecha_salida})
+
+    # Si las fechas están vacías o si el método de solicitud no es POST,
+    # simplemente renderiza el formulario nuevamente
+    return render(request, 'lista_disponibilidad.html')
 '''
 class DetalleReservaServicio(LoginRequiredMixin, ListView):
     model = ReservaServicio

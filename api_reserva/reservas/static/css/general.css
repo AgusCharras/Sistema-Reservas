@@ -322,6 +322,7 @@ table a:hover{
     padding-top: 1rem;
 }
 
+
 .setformServicio{
     width: 31.25rem;
 }
@@ -392,6 +393,53 @@ h3{
     text-align: center;
     color: var(--color-dark);
 }
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    color: var(--color-dark);
+    display: inline-block;
+    width: 150px; /* Ancho deseado para las etiquetas */
+}
+
+/* disponibilidad */
+
+.botonFecha{
+    background-color: var(--color-white);
+    color: var(--color-dark);
+    border: 1px solid var(--color-dark);
+    border-radius: 0.3rem;
+    transition: ease 0.3s;
+}
+
+.botonFecha:hover{
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger);
+    border-radius: 0.4rem;
+    transition: ease 0.3s;
+}
+
+.cabanias_disponibles{
+    color: var(--color-dark);
+}
+
+.cabanias_disponibles li{
+    color: var(--color-danger);
+    text-decoration: none;
+}
+
+.cabanias_disponibles a{
+    color: var(--color-danger);
+    text-decoration: none;
+    transition: ease-in-out 0.1s;
+}
+
+.cabanias_disponibles a:hover{
+    color: var(--color-dark);
+}
+
 
 /*confirmacion para eliminar un objeto */
 

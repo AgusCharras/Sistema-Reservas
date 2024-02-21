@@ -50,6 +50,7 @@ urlpatterns = [
     path('search_clients/', views.search_clients, name='search_clients'),
 
     path('cabanias/disponibilidad/<int:cabania_id>/', views.disponibilidad_cabania, name='disponibilidad'),
-    path('complejo/disponibilidad/<int:complejo_id>/', views.disponibilidad_complejo, name='disponibilidad')
+    path('complejo/disponibilidad/<int:complejo_id>/', views.disponibilidad_complejo, name='disponibilidad'),
+    path('cabanias_disponibles/', views.cabanias_disponibles, name='cabanias_disponibles')
 
 ]
