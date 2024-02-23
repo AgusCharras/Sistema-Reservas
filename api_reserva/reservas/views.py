@@ -196,6 +196,11 @@ def detalle_reserva(request, reserva_id):
 
     return render(request, 'detalle_reserva.html', context)
 
+def obtener_cabanias(request, complejo_id):
+    cabanias = Cabania.objects.filter(complejo_id=complejo_id).values_list('id','nombre')
+    cabanias_dict = dict(cabanias)
+    return JsonResponse(cabanias_dict)
+
 def detalle_servicio(request, servicio_id):
     """
     Vista que muestra los detalles de un servicio específico identificado por su ID.
@@ -466,13 +471,14 @@ class lista_reservas(LoginRequiredMixin, ListView):
     context_object_name = 'reservas'
     paginate_by = 10
 
+
     def get_queryset(self):
         query = self.request.GET.get('q', '')
-        order_by = self.request.GET.get('order_by', 'id')
+
         reservas = Reserva.objects.filter(
-            Q(cliente__apellido_nombre__icontains=query) |  # Búsqueda por nombre del cliente
-            Q(cliente__dni__icontains=query)             # Búsqueda por DNI del cliente
-        ).order_by(order_by)
+            Q(cliente__apellido_nombre__icontains=query) |
+            Q(cliente__dni__icontains=query)
+        )
 
         return reservas
     
@@ -530,6 +536,15 @@ class nuevo_reserva(LoginRequiredMixin, CreateView):
 
         return context
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        cabania_id = self.request.GET.get('cabania_id')
+        if cabania_id:
+            cabania = Cabania.objects.get(pk=cabania_id)
+            kwargs['initial'] = {'cabania': cabania_id, 'complejo': cabania.complejo_id}
+        return kwargs
+    
+    
     
     def form_valid(self, form):
         """

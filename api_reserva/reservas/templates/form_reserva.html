@@ -11,7 +11,7 @@
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{form.as_p}}
-
+    
                 {{ formset.management_form }}
     </div>
 
@@ -68,5 +68,31 @@
     });
 </script>
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#complejo-select').change(function() {
+            var complejoId = $(this).val();
+            if (complejoId) {
+                $.ajax({
+                    url: '/obtener_cabanias/' + complejoId + '/',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#cabania-select').empty();
+                        $.each(data, function(key, value) {
+                            $('#cabania-select').append('<option value="' + key + '">' + value + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#cabania-select').empty();
+            }
+        });
+    });
+    </script>
+    
 
 {% endblock %} 

@@ -11,8 +11,8 @@
         <p><strong>Complejo: </strong>{{ cabania.complejo }}</p>
 
         <div class="contenedorBotones">
-            <a class="botonPrimario" href="{% url 'disponibilidad' cabania.id %}" >Disponibilidad</a>
-            <a class="botonPrimario" href="">Reservar</a>
+            <a class="botonPrimario" href="{% url 'disponibilidad-cabania' cabania.id %}" >Disponibilidad</a>
+            <a class="botonPrimario" href="{% url 'nuevo_reserva' %}?cabania_id={{ cabania.id }}">Reservar</a>
         </div>
     </div>
 </div>

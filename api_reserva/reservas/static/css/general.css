@@ -724,9 +724,6 @@ body.dark-mode-variables #results th, body.dark-mode-variables #results td {
     height: 15rem;
     width: 15rem;
 
-    background-color: #51D6FF;
-    color: #9381ff;
-
     border-radius: 1rem;
 
     display: flex;
@@ -736,21 +733,32 @@ body.dark-mode-variables #results th, body.dark-mode-variables #results td {
 
     font-family: 'poppins', sans-serif;
 
-    transition: ease 1.5s;
+    transition: ease-in-out 0.5s;
+}
+
+a:link, a:visited, a:active{
+    text-decoration: none;
 }
 
 .maincard span{
     font-size: 5rem;
 }
 
+.maincard h1{
+    text-decoration: none;
+}
+
 #card1{
     background-color: var(--color-white);
     color:var(--color-dark) ;
+    text-decoration: none;
 }
+
 
 #card2{
     background-color: var(--color-primary);
     color: var(--color-white);
+    text-decoration: none;
 }
 
 #card3{
@@ -761,6 +769,14 @@ body.dark-mode-variables #results th, body.dark-mode-variables #results td {
 #card4{
     background-color: var(--color-cyan);
     color: var(--color-white);
+}
+
+#card2:hover{
+    background:var(--color-danger);
+}
+
+#card3:hover{
+    background:var(--color-primary);
 }
 
 #results {

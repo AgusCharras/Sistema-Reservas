@@ -72,6 +72,8 @@ class formReservaServicio(forms.ModelForm):
 
 class formReserva(forms.ModelForm):
 
+    cabania_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+
     cliente_apellido_nombre = forms.CharField(
         required=False,
         label='Cliente',

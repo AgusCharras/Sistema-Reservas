@@ -49,8 +49,9 @@ urlpatterns = [
 
     path('search_clients/', views.search_clients, name='search_clients'),
 
-    path('cabanias/disponibilidad/<int:cabania_id>/', views.disponibilidad_cabania, name='disponibilidad'),
-    path('complejo/disponibilidad/<int:complejo_id>/', views.disponibilidad_complejo, name='disponibilidad'),
-    path('cabanias_disponibles/', views.cabanias_disponibles, name='cabanias_disponibles')
+    path('cabanias/disponibilidad/<int:cabania_id>/', views.disponibilidad_cabania, name='disponibilidad-cabania'),
+    path('complejo/disponibilidad/<int:complejo_id>/', views.disponibilidad_complejo, name='disponibilidad-complejo'),
+    path('cabanias_disponibles/', views.cabanias_disponibles, name='cabanias_disponibles'),
+    path('obtener_cabanias/<int:complejo_id>/', views.obtener_cabanias, name='obtener_cabanias'),
 
 ]

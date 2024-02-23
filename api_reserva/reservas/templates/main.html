@@ -4,27 +4,35 @@
     {% include 'navbar.html' %} 
 
 <div class="contenedorCard">
+
     <div class="maincard" id="card1">
         <h1>Gestiona</h1>
         <span class="material-symbols-outlined">
             monitoring
         </span>
     </div>
+
+    <a href="{% url 'cabanias_disponibles' %}">
     <div class="maincard" id="card2">
-        <h1>Finanzas</h1>
+        <h1>Ocupacion</h1>
         <span class="material-symbols-outlined">
-            request_quote
+            calendar_month
         </span>
     </div>
+    </a>
+
+    <a href="">
     <div class="maincard" id="card3">
         <h1>Clientes</h1>
         <span class="material-symbols-outlined">
             groups
         </span>
     </div>
-    <a href="{% url 'cabanias_disponibles' %}">
+    </a>
+
+    <a href="">
     <div class="maincard" id="card4">
-        <h1>Hospedajes</h1>
+        <h1>Hospedaje</h1>
         <span class="material-symbols-outlined">
             home
         </span>
