@@ -3,59 +3,60 @@
 {% block content %}
 
 <div class="contenedor1">
-<section class="contenedorFormReserva">
+    <section class="contenedorFormReserva">
 
-    <div class="formReserva">
+        <div class="formReserva">
 
-            <h1>Reserva</h1> 
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{form.as_p}}
-    
-                {{ formset.management_form }}
-    </div>
+                <h1>Reserva</h1> 
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{form.as_p}}
+        
+                    {{ formset.management_form }}
+        </div>
 
-    <div class="setformServicio">
-                <h1>Servicios</h1>
+        <div class="setformServicio" id="formset-container">
+                    <h1>Servicios</h1>
 
-                <table class="table table-striped table-hover" id="results">
-                    <thead>
-                        <th>Id</th>
-                        <th></th><th></th><th></th>
-                        <th>¿Borrar?</th>
-                    </thead>
-                    <tbody>
-                    {% for form in formset %}
-                    <tr>
-                        <td>{{ form.id.value }}</td>
-                        {% for field in form %}
-                            <td>{{ field }}</td>
+                    <table class="table table-striped table-hover" id="results">
+                        <thead>
+                            <th>Id</th>
+                            <th></th><th></th><th></th>
+                            <th>¿Borrar?</th>
+                        </thead>
+                        <tbody>
+                        {% for form in formset %}
+                        <tr>
+                            <td>{{ form.id.value }}</td>
+                            {% for field in form %}
+                                <td>{{ field }}</td>
+                            {% endfor %}
+                        </tr>
                         {% endfor %}
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-    </div>
+                        </tbody>
+                    </table>
+        </div>
 
-    <div class="totales">
-                    <h1>Totales</h1>
-                    <p><strong>Precio Cabaña: </strong> {{ reserva.cabania.precio}}</p>
-                    <p><strong>Cantidad Dias: </strong>{{ cantidad_dias }}</p>
-                    <p><strong>Total Cabaña: </strong>{{ total_cabania }}</p>
-                    <p><strong>Total Servicios x Dia: </strong>{{ total_servicios }}</p>
-                    <p><strong>Total Servicios x reserva: </strong>{{ total_servicios_reserva}}</p>
-                    
-                    <div><p><strong>Total Reserva: </strong>{{total_reserva}}</p></div>
-    </div>
+        <div class="totales">
+                        <h1>Totales</h1>
+                        <p><strong>Precio Cabaña: </strong> {{ reserva.precio_original_cabania}}</p>
+                        <p><strong>Cantidad Dias: </strong>{{ cantidad_dias }}</p>
+                        <p><strong>Total Cabaña: </strong>{{ total_cabania }}</p>
+                        <p><strong>Total Servicios x Dia: </strong>{{ total_servicios }}</p>
+                        <p><strong>Total Servicios x reserva: </strong>{{ total_servicios_reserva}}</p>
+                        
+                        <div><p><strong>Total Reserva: </strong>{{total_reserva}}</p></div>
+        </div>
 
-    <div class="contenedorBotones1">
-        <button class="botonSecundario" type="submit">Guardar</button>
-        <a class="botonSecundario" href="{% url 'lista_reservas' %}">Cancelar</a>
-    </div>
+        <div class="contenedorBotones1">
+            <button class="botonSecundario" type="submit">Guardar</button>
+            <a class="botonSecundario" href="{% url 'lista_reservas' %}">Cancelar</a>
+        </div>
 
-                </form>
+                    </form>
 
-</section>
+    </section>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -67,7 +68,7 @@
         source: "{% url 'search_clients' %}",
     });
 </script>
-</div>
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -92,7 +93,8 @@
             }
         });
     });
-    </script>
-    
+</script>
+
+
 
 {% endblock %} 

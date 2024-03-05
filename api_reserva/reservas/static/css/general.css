@@ -164,6 +164,7 @@ header span{
 
 .botonSecundario{
     padding: 1rem;
+    margin:0.2rem;
     font-family: 'poppins', sans-serif;
     font-size: 1rem;
     font-weight:400;
@@ -326,6 +327,8 @@ table a:hover{
 .setformServicio{
     width: 31.25rem;
 }
+
+
 
 .formReserva{
     width: 40rem;
@@ -818,6 +821,7 @@ a:link, a:visited, a:active{
 
     .totales{
         width: 20rem;
+        height: 20rem;
     }
 }
 

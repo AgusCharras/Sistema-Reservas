@@ -559,69 +559,66 @@ class nuevo_reserva(LoginRequiredMixin, CreateView):
         """
         cliente_apellido_nombre = form.cleaned_data.get('cliente_apellido_nombre')
         cliente = Cliente.objects.filter(apellido_nombre=cliente_apellido_nombre).first()
-    
+
         if cliente:
             reserva = form.save(commit=False)
             reserva.cliente = cliente
             reserva.save()
 
+            # Crear el formset de servicios asociados a la reserva
             ReservaServicioFormSet = inlineformset_factory(Reserva, ReservaServicio, form=formReservaServicio, extra=1)
             formset = ReservaServicioFormSet(self.request.POST, instance=reserva)
-            
-            if formset.is_valid():
-                formset.save()
 
-            return super().form_valid(form)
+            # Verificar si el formset y el formulario de la reserva son válidos
+            if formset.is_valid() and form.is_valid():
+                form.save()
+                formset.save(commit=False)  # Guarda los objetos del formset, pero no los aplica a la base de datos
+
+                # Guardar el precio original de cada servicio asociado a la reserva
+                for servicio_form in formset.forms:
+                    if servicio_form.cleaned_data.get('servicio'):
+                        servicio_reserva = servicio_form.save(commit=False)
+                        servicio_reserva.precio_original_servicio = servicio_reserva.servicio.precio
+                        servicio_reserva.save()
+
+                return super().form_valid(form)
         else:
             form.add_error('cliente_apellido_nombre', 'Cliente no encontrado')
             return self.form_invalid(form)
-
+        
     def total(self):
         """
-        Calcula el total de una reserva dado su ID.
-
-        Args:
-            reserva_id (int): ID de la reserva para calcular su total.
-
-        Returns:
-            dict: Diccionario con los detalles del cálculo del total de la reserva, 
-            incluyendo la reserva, el costo de la cabaña, la cantidad de días, 
-            el total por cabaña y el total por servicios.
+        Calcula los totales relacionados con la reserva.
         """
-        reserva = Reserva.objects.get(pk=id)
-        cabania = reserva.cabania.precio
+        reserva = self.object
+        precio_original_cabania = reserva.precio_original_cabania  # Usar el precio original de la cabaña
+
         entrada = reserva.diaEntrada
         salida = reserva.diaSalida
+        cantidad_dias = (salida - entrada).days
 
-        cantidad_dias = (salida - entrada).days 
-        total_cabania = cabania * cantidad_dias
+        total_cabania = precio_original_cabania * cantidad_dias
 
-        formset = formReserva.ReservaServicioFormset(data=self.request.POST)
         total_servicios = 0
+        for reserva_servicio in reserva.reservaservicio_set.all():
+            servicio = reserva_servicio.servicio
+            total_servicios += servicio.precio
 
-        if formset.is_valid():
-            for servicio_form in formset.forms:
-                servicio_id = servicio_form.cleaned_data.get('servicio')
-                
-                # Verificar si se seleccionó un servicio
-                if servicio_id:
-                    try:
-                        servicio = Servicio.objects.get(id=servicio_id)
-                        total_servicios += servicio.precio
-                    except Servicio.DoesNotExist:
-                        # Manejar el caso en el que el servicio no existe
-                        pass
+        total_reserva = total_cabania + total_servicios
+
+        total_servicios_reserva = total_servicios * cantidad_dias 
 
         context = {
             'reserva': reserva,
-            'cabania': cabania,
+            'cabania': precio_original_cabania,
             'cantidad_dias': cantidad_dias,
             'total_cabania': total_cabania,
-            'total_servicios': total_servicios
+            'total_servicios': total_servicios,
+            'total_reserva': total_reserva,
+            'total_servicios_reserva': total_servicios_reserva
         }
 
         return context
-
         
 class modif_reserva(LoginRequiredMixin, UpdateView):
     """
@@ -701,6 +698,24 @@ class modif_reserva(LoginRequiredMixin, UpdateView):
             reserva = form.save(commit=False)
             reserva.cliente = cliente
             reserva.save()
+
+            # Crear el formset de servicios asociados a la reserva
+            ReservaServicioFormSet = inlineformset_factory(Reserva, ReservaServicio, form=formReservaServicio, extra=1)
+            formset = ReservaServicioFormSet(self.request.POST, instance=reserva)
+
+            # Guardar el precio original de cada servicio asociado a la reserva
+            for servicio_form in formset:
+                if servicio_form.is_valid() and servicio_form.cleaned_data.get('servicio'):
+                    servicio_reserva = servicio_form.save(commit=False)
+                    servicio_reserva.precio_original_servicio = servicio_reserva.servicio.precio
+                    servicio_reserva.save()
+
+            # Actualizar el precio de la reserva
+            total_context = self.total()
+            total_reserva = total_context['total_reserva']
+            reserva.total_reserva = total_reserva
+            reserva.save()
+
             return super().form_valid(form)
         else:
             form.add_error('cliente_apellido_nombre', 'Cliente no encontrado')
@@ -711,53 +726,37 @@ class modif_reserva(LoginRequiredMixin, UpdateView):
     def total(self):
         """
         Calcula los totales relacionados con la reserva.
-
-        Returns:
-            dict: Diccionario con los detalles del cálculo de totales de la reserva, 
-            incluyendo la reserva, el costo de la cabaña, la cantidad de días, 
-            el total por cabaña, el total por servicios y el total de la reserva.
         """
         reserva = self.object
-        cabania = reserva.cabania.precio
+        precio_original_cabania = reserva.precio_original_cabania  # Usar el precio original de la cabaña
 
-        entrada = reserva.diaEntrada #dia entrada
-        salida = reserva.diaSalida  #dia salida
+        entrada = reserva.diaEntrada
+        salida = reserva.diaSalida
+        cantidad_dias = (salida - entrada).days
 
-        cantidad_dias = (salida - entrada).days #calculo de la diferencia entre dia de entrada y salida
-
-        total_cabania = cabania * cantidad_dias #calculo entre el precio de la cabaña y la cantidad de dias
-
-        total_servicios = 0 #calculo sobre el total de servicios
-
+        total_cabania = precio_original_cabania * cantidad_dias
 
         total_servicios = 0
-        reserva_servicios = ReservaServicio.objects.filter(reserva=reserva)
+        for reserva_servicio in reserva.reservaservicio_set.all():
+            precio_original_servicio = reserva_servicio.precio_original_servicio
+            total_servicios += precio_original_servicio
 
-                # Iterar sobre cada formulario en el formset
-        for reserva_servicio in reserva_servicios:
-            servicio = reserva_servicio.servicio
-            total_servicios += servicio.precio
-        
-
-        total_reserva = total_cabania + total_servicios #calculo sobre el total de la reserva
-        print(total_servicios)
+        total_reserva = total_cabania + total_servicios
 
         total_servicios_reserva = total_servicios * cantidad_dias 
 
-        total_reserva = total_cabania + total_servicios_reserva #calculo sobre el total de la reserva
-
         context = {
             'reserva': reserva,
-            'cabania': cabania,
+            'cabania': precio_original_cabania,
             'cantidad_dias': cantidad_dias,
             'total_cabania': total_cabania,
             'total_servicios': total_servicios,
             'total_reserva': total_reserva,
-            'total_servicios': total_servicios,
             'total_servicios_reserva': total_servicios_reserva
         }
 
         return context
+
 
 class borrar_reserva(LoginRequiredMixin, DeleteView):
     model = Reserva

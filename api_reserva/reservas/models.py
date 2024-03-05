@@ -57,6 +57,7 @@ class Reserva(models.Model):
     diaEntrada = models.DateField()
     diaSalida = models.DateField()
     seña = models.FloatField(default=0, max_length=12)
+    precio_original_cabania = models.FloatField(default=0)
 
     def __str__(self):
         return self.cliente.apellido_nombre
@@ -75,10 +76,16 @@ class Reserva(models.Model):
         if reservas_superpuestas.exists():
             raise ValidationError('Ya hay una reserva existente para esta cabaña en estas fechas.')
     
-
+    def save(self, *args, **kwargs):
+        # Verificar si el objeto ya existe en la base de datos
+        if self.pk is None:
+            # Si es una nueva reserva, actualiza el precio original de la cabaña
+            self.precio_original_cabania = self.cabania.precio
+        super().save(*args, **kwargs)
 class ReservaServicio(models.Model):
     reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE)
     servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE)
+    precio_original_servicio = models.FloatField(default=0)  # Campo para almacenar el precio original del servicio en el momento de la reserva
 
     def __str__(self):
         return f"ReservaServicio {self.id}"
