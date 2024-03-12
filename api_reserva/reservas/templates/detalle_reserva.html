@@ -5,7 +5,6 @@
 <div class="contenedorDetalle">
     <div class="detalle">
         <h1>Detalle Reserva</h1>
-        <a href="{% url 'factura' reserva_id=reserva.id %}" class="botonFactura">Facturar</a>
 
         <p><strong>Cliente: </strong>{{ reserva.cliente.apellido_nombre }}</p>
         <p><strong>Complejo: </strong>{{ reserva.complejo }}</p>
@@ -13,8 +12,11 @@
         <p><strong>Día de Entrada: </strong>{{ reserva.diaEntrada }}</p>
         <p><strong>Día de Salida: </strong>{{ reserva.diaSalida }}</p>
         <p><strong>Seña: </strong>{{ reserva.seña }}</p>
-        <p><strong>Precio: </st>{{ reserva.total_reserva }}</p>    
-        
+
+        <div class="contenedorBotones">
+            <a class="botonPrimario" href="/reservas/reservaModif/{{ reserva.id }}">Ver Reserva</a>
+            <a href="{% url 'factura' reserva_id=reserva.id %}" class="botonPrimario">Facturar</a>
+        </div>
     </div>
 </div>
 

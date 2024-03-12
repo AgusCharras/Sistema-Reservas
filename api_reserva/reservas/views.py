@@ -545,7 +545,6 @@ class nuevo_reserva(LoginRequiredMixin, CreateView):
         return kwargs
     
     
-    
     def form_valid(self, form):
         """
         Valida el formulario enviado por el usuario.
@@ -604,9 +603,10 @@ class nuevo_reserva(LoginRequiredMixin, CreateView):
             servicio = reserva_servicio.servicio
             total_servicios += servicio.precio
 
-        total_reserva = total_cabania + total_servicios
 
         total_servicios_reserva = total_servicios * cantidad_dias 
+        total_reserva = total_cabania + total_servicios_reserva
+
 
         context = {
             'reserva': reserva,
@@ -741,9 +741,8 @@ class modif_reserva(LoginRequiredMixin, UpdateView):
             precio_original_servicio = reserva_servicio.precio_original_servicio
             total_servicios += precio_original_servicio
 
-        total_reserva = total_cabania + total_servicios
-
         total_servicios_reserva = total_servicios * cantidad_dias 
+        total_reserva = total_cabania + total_servicios_reserva
 
         context = {
             'reserva': reserva,
@@ -826,6 +825,7 @@ def Logout(request):
     """
     logout(request)
     return redirect('/')
+from django.http import JsonResponse
 
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
@@ -912,7 +912,7 @@ def factura(request, reserva_id):
     return FileResponse(buf, as_attachment=True, filename=f'reserva{reserva_id}_factura.pdf')
 
 
-from django.http import JsonResponse
+
 
 def search_clients(request):
     """
