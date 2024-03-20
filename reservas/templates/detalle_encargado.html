@@ -1,0 +1,16 @@
+{% include 'navbar.html' %} 
+
+{% block content %}
+<div class="contenedorDetalle">
+
+    <div class="detalle">
+        <h1>Encargado</h1>  
+        <h2>{{ encargado.apellido_nombre }}</h2>
+        <p><strong>Dni: </strong> {{ encargado.dni}}</p>
+        <p><strong>Telefono: </strong> {{ encargado.telefono}}</p>
+        <p><strong>Email: </strong> {{ encargado.email}}</p>
+    </div>
+
+</div>
+
+{% endblock %}

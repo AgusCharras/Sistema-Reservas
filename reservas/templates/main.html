@@ -1,0 +1,35 @@
+{% load static %} 
+{% block content %} 
+
+    {% include 'navbar.html' %} 
+
+<div class="contenedorCard">
+
+    <a href="{% url 'lista_complejos' %}">
+    <div class="maincard" id="card2">
+        <h1>Ocupacion</h1>
+        <span class="material-symbols-outlined">
+            calendar_month
+        </span>
+    </div>
+    </a>
+
+    <a href="clientes">
+    <div class="maincard" id="card3">
+        <h1>Clientes</h1>
+        <span class="material-symbols-outlined">
+            groups
+        </span>
+    </div>
+    </a>
+
+    <a href="complejos">
+    <div class="maincard" id="card4">
+        <h1>Hospedaje</h1>
+        <span class="material-symbols-outlined">
+            home
+        </span>
+    </div>
+    </a>
+</div>
+{% endblock %} 

@@ -1,0 +1,35 @@
+{% include 'navbar.html' %} 
+{% load static %} 
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/dist/fullcalendar.min.css" />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<div class="contenedor">
+    
+    <h1>Disponibilidad</h1>
+        <div class="d-flex justify-content-end align-items-end"><a class="botonPrimario" href="{% url 'nuevo_reserva' %}?disponibilidad-cabania={{ cabania_id }}">Añadir Reserva</a></div> 
+    <div id="calendario"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendario');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                events: [
+                    {% for reserva in reservas %}
+                        {
+                            title: '{{reserva.cliente}}',
+                            start: '{{ reserva.diaEntrada|date:"Y-m-d" }}',
+                            end: '{{ reserva.diaSalida|date:"Y-m-d" }}'
+                        }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ],
+                // Otras opciones de configuración aquí...
+                locale: 'es', // Cambiar a español
+            });
+
+            calendar.render();
+        });
+    </script>
+
+</div>
+
+{% endblock %} 

@@ -1,0 +1,25 @@
+{% include 'navbar.html' %} 
+{% load static %} 
+{% block content %}
+
+<div class="contenedor2">
+
+    <div class="formulario">
+        <div class="row">
+            <h1 class="titulo">Clientes</h1>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{form.as_p}}
+
+                <div class="contenedorBotones">
+                    <button class="botonSecundario" type="submit">Guardar</button>
+                    <a class="botonSecundario" href="{% url 'lista_clientes' %}">Cancelar</a>   
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %} 

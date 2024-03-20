@@ -1,0 +1,29 @@
+{% include 'navbar.html' %}
+
+{% block content %}
+
+<div class="profile-conteiner">
+    <h1 class="titulo">Usuario logueado:</h1>
+    <h1 class="user">{{request.user.username}}</h1>
+
+    <h1 class="titulo">Nombre:</h1>
+    <h1 class="user">{{request.user.first_name}}</h1>
+
+    <h1 class="titulo">Apellido:</h1>
+    <h1 class="user">{{request.user.last_name}}</h1>
+
+    <h1 class="titulo">email:</h1>
+    <h1 class="user">{{request.user.email}}</h1>
+
+    <h1 class="titulo">Fecha de registro:</h1>
+    <h1 class="user">{{request.user.date_joined}}</h1>
+
+    <h1 class="titulo">Ultimo ingreso:</h1>
+    <h1 class="user">{{request.user.last_login}}</h1>
+
+
+</div>
+
+{{request.user.firs}}
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% include 'navbar.html' %} 
+
+{% block content %}
+<div class="contenedorDetalle">
+    <div class="detalle">
+        <h1>Cliente</h1>
+        <h2>{{ cliente.apellido_nombre }}</h2>
+        <p><strong>DNI: </strong> {{ cliente.dni}}</p>
+        <p><strong>Telefono: </strong> {{ cliente.telefono}}</p>
+        <p><strong>Email: </strong> {{ cliente.email}}</p>
+        <p><strong>Pais: </strong> {{ cliente.pais}}</p>
+        <p><strong>Provincia: </strong> {{ cliente.provincia}}</p>
+        <p><strong>Localidad: </strong> {{ cliente.localidad}}</p>
+    </div>
+</div>
+{% endblock %}

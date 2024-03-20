@@ -1,0 +1,24 @@
+{% include 'navbar.html' %} 
+
+{% block content %}
+
+<div class="contenedorDetalle">
+    <div class="detalle">
+        <h1>Detalle Reserva</h1>
+
+        <p><strong>Cliente: </strong>{{ reserva.cliente.apellido_nombre }}</p>
+        <p><strong>Complejo: </strong>{{ reserva.complejo }}</p>
+        <p><strong>Cabaña: </strong>{{ reserva.cabania }}</p>
+        <p><strong>Día de Entrada: </strong>{{ reserva.diaEntrada }}</p>
+        <p><strong>Día de Salida: </strong>{{ reserva.diaSalida }}</p>
+        <p><strong>Seña: </strong>{{ reserva.seña }}</p>
+
+        <div class="contenedorBotones">
+            <a class="botonPrimario" href="/reservas/reservaModif/{{ reserva.id }}">Ver Reserva</a>
+            <a href="{% url 'factura' reserva_id=reserva.id %}" class="botonPrimario">Facturar</a>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %} 

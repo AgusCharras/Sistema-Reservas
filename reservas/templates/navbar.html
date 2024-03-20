@@ -1,0 +1,67 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block content %} 
+
+    
+<header>
+    <h1>Reser<span>Vas</span></h1>
+</header>
+
+<nav class="navbar navbar-expand-lg">
+
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar collapse navbar-collapse" id="navbarSupportedContent" >
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="botonPrimario" href="/">inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="botonPrimario" href="/reservas">Reservas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="botonPrimario"  href="/servicios">Servicios</a>
+                </li>
+                <li class="nav-item">
+                    <a class="botonPrimario" href="/clientes">Clientes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="botonPrimario" href="/encargados">Encargados</a>
+                </li>
+                <li class="nav-item">
+                    <a class="botonPrimario" href="/cabanias">Cabañas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="botonPrimario" href="/complejos">Complejos</a>
+                </li>
+
+                <button type="button" class="btn dark-mode">
+                    <span class="material-symbols-outlined" id="botonDarkMode">
+                        contrast
+                    </span>
+                </button>
+                
+            </ul>
+            <div class="contenedorUsuario">
+        
+                <span class="material-symbols-outlined">
+                        account_circle
+                </span>
+                
+                <div>
+                    {% if request.user.is_authenticated %}
+                    <h4 class="user">{{ request.user.username }}</h4>
+                    <a href="/logout/">Logout</a>
+                    {% else %}
+                    <a href="/login/">Login</a>
+                    {% endif %}
+                </div>
+        
+            </div>
+        </div>
+    </div>
+</nav>
+
+{% endblock %} 

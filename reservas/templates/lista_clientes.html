@@ -1,0 +1,75 @@
+{% include 'navbar.html' %} 
+{% load static %} 
+{% block content %}
+
+<div class="contenedor">
+    
+<div class="row">
+
+    <h2 class="col display-4 my-3">Clientes</h2>
+
+    <div class=" col d-flex justify-content-end align-items-end mb-3">
+        <form method="GET">
+            <div class="input-group">
+                <input type="text" id="search" class="form-control inputApagado" name="q" value="{{ query }}" placeholder="Buscar Cliente...">
+                <button class="lupa" type="submit"><span class="material-symbols-outlined">search</span></button>
+                
+                <div class="d-flex justify-content-end align-items-end"><a class="botonPrimario" href="/clientes/clienteNuevo/">Añadir Cliente</a></div>
+        </form>
+    </div>
+</div>
+    <table class="table table-striped table-hover" id="results" data-bs-theme="light">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>DNI</th>
+                <th>Telefono</th>
+                <th>Email</th>
+                <th>Pais</th>
+                <th>Provincia</th>
+                <th>Localidad</th>
+            </tr>       
+        </thead>
+        <tbody>
+            {% for cliente in clientes %} 
+            <tr class="filas">
+                <td><a href="{% url 'detalle_cliente' cliente.id %}">{{ cliente.apellido_nombre }}</a></td>
+                <td>{{ cliente.dni }}</td>
+                <td>{{ cliente.telefono }}</td>
+                <td>{{ cliente.email }}</td>
+                <td>{{ cliente.pais }}</td>
+                <td>{{ cliente.provincia }}</td>
+                <td>{{ cliente.localidad }}</td>
+                <td class="d-flex justify-content-end align-items-end"><a class="botonSecundario" href="/clientes/clienteModif/{{ cliente.id }}"> Modificar</td>
+                <td><a class="botonSecundario" href="/clientes/clienteBorrar/{{ cliente.id }}">Borrar</a></td>
+            {% endfor %} 
+        </tbody>
+    </table>
+
+    <div class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <a class="botonPrimario" href="?page=1">Primera</a>
+            <a class="botonPrimario" href="?page={{ page_obj.previous_page_number }}">
+                Anterior
+            </a>
+        {% endif %}
+    
+        <span class="current-page btn btn-outline-light disabled text-primary mb-3">
+            {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        </span>
+    
+        {% if page_obj.has_next %}
+            <a class="botonPrimario" href="?page={{ page_obj.next_page_number }}">
+                Siguiente
+            </a>
+            <a class="botonPrimario" href="?page={{ page_obj.paginator.num_pages }}">
+                Última
+            </a>
+        {% endif %}
+    </div>
+
+</div>
+
+
+
+{% endblock %} 

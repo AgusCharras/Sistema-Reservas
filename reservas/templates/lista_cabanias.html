@@ -1,0 +1,71 @@
+{% include 'navbar.html' %} 
+{% load static %} 
+{% block content %}
+
+<div class="contenedor">
+
+<div class="row">
+    <h2 class="col display-4 my-3">Cabañas</h2>
+
+    <div class=" col d-flex justify-content-end align-items-end mb-3">
+        <form method="GET">
+            <div class="input-group">
+                <input type="text" id="search" class="form-control inputApagado" name="q" value="{{ query }}" placeholder="Buscar Cabaña...">
+                <button class="lupa" type="submit"><span class="material-symbols-outlined">search</span></button>
+    
+                <div class="d-flex justify-content-end align-items-end"><a class="botonPrimario" href="/cabanias/cabaniaNuevo/">Añadir Cabaña</a></div>
+        </form>
+    </div>
+
+</div>
+    <table class="table table-striped table-hover" id="results">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Capacidad</th>
+                <th>Precio</th>
+                <th>Complejo</th>
+            </tr>       
+        </thead>
+        <tbody>
+            {% for cabania in cabanias %} 
+            <tr class="filas">
+                <td><a href="{% url 'detalle_cabania' cabania.id %}">{{ cabania.nombre }}</a></td>
+                <td>{{ cabania.tipo }}</td>
+                <td>{{ cabania.capacidad }}</td>
+                <td>{{ cabania.precio }}</td>
+                <td>{{ cabania.complejo }}</td>
+                <td class="d-flex justify-content-end align-items-end"><a class="botonSecundario" href="/cabanias/cabaniaModif/{{ cabania.id }}"> Modificar</td>
+                <td><a class="botonSecundario" href="/cabanias/cabaniaBorrar/{{ cabania.id }}">Borrar</a></td>
+                <td><a class="botonPrimario" href="{% url 'disponibilidad-cabania' cabania.id %}">Disponibilidad</a></td>
+            </tr>
+            {% endfor %} 
+        </tbody>
+    </table>
+
+    <div class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <a class="botonPrimario" href="?page=1">Primera</a>
+            <a class="botonPrimario" href="?page={{ page_obj.previous_page_number }}">
+                Anterior
+            </a>
+        {% endif %}
+    
+        <span class="current-page btn btn-outline-light disabled text-primary mb-3">
+            {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        </span>
+    
+        {% if page_obj.has_next %}
+            <a class="botonPrimario" href="?page={{ page_obj.next_page_number }}">
+                Siguiente
+            </a>
+            <a class="botonPrimario" href="?page={{ page_obj.paginator.num_pages }}">
+                Última
+            </a>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %} 

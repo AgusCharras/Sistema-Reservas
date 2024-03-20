@@ -1,0 +1,19 @@
+{% include 'navbar.html' %} 
+
+{% block content %}
+<div class="contenedorDetalle">
+    <div class="detalle">
+        <h1>Cabaña</h1>
+        <h2>{{ cabania.nombre }}</h2>
+        <p><strong>Tipo: </strong>{{ cabania.tipo }}</p>
+        <p><strong>Capacidad: </strong>{{ cabania.capacidad }}</p>
+        <p><strong>Precio: </strong>{{ cabania.precio }}</p>
+        <p><strong>Complejo: </strong>{{ cabania.complejo }}</p>
+
+        <div class="contenedorBotones">
+            <a class="botonPrimario" href="{% url 'disponibilidad-cabania' cabania.id %}" >Disponibilidad</a>
+            <a class="botonPrimario" href="{% url 'nuevo_reserva' %}?cabania_id={{ cabania.id }}">Reservar</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

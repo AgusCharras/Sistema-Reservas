@@ -1,0 +1,20 @@
+{% include 'navbar.html' %} 
+
+{% block content %}
+
+<div class="contenedorDetalle">
+    <div class="detalle">
+        <h1>Complejo</h1>
+        <h2>{{  complejo.nombre }}</h2>
+        <p><strong>Direccion: </strong> {{ complejo.direccion}}</p>
+        <p><strong>Encargado: </strong> {{ complejo.encargado}}</p>
+
+        <div class="contenedorBotones">
+            <a class="botonPrimario" href="{% url 'disponibilidad-complejo' complejo.id %}" >Disponibilidad</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+                                             <--Borrar Template-->   

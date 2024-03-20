@@ -1,0 +1,62 @@
+{% include 'navbar.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .botonPrimario2 {
+        position: absolute;
+        top: 175px;
+        left: 1830px;
+        padding: 1rem;
+        font-family: 'poppins', sans-serif;
+        font-size: 1rem;
+        font-weight:400;
+        line-height: 0.5;
+        margin-left:0.5rem;
+        margin-top:0.4rem ;
+    
+        display: inline-block;
+        text-align: center;
+        text-decoration: none;
+        vertical-align: middle;
+        cursor: pointer;
+    
+        border: 0.1rem solid var(--color-primary);
+        border-radius: var(--border-radius-1);
+        background-color: var(--color-white);
+  
+        user-select: none;
+        transition:ease-in-out 0.35s all;
+
+        width: 10rem;
+        text-decoration: none;
+        color: var(--color-primary);
+    }
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/dist/fullcalendar.min.css" />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<div class="contenedor">
+    <h1>Disponibilidad</h1>
+    <a class="botonPrimario2" href="{% url 'nuevo_reserva' %}?complejo_id={{ complejo_id }}">Añadir Reserva</a>
+    <div id="calendario"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendario');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                events: [
+                    {% for reserva in reservas %}
+                    {
+                        title: '{{reserva.cabania}} - {{reserva.cliente}}',
+                        start: '{{ reserva.diaEntrada|date:"Y-m-d" }}',
+                        end: '{{ reserva.diaSalida|date:"Y-m-d" }}'
+                    }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ],
+                // Otras opciones de configuración aquí...
+                locale: 'es', // Cambiar a español
+            });
+            calendar.render();
+        });
+    </script>
+</div>
+{% endblock %}
