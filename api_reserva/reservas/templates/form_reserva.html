@@ -37,16 +37,21 @@
                     </table>
         </div>
 
-        <div class="totales">
-                        <h1>Totales</h1>
-                        <p><strong>Precio Cabaña: </strong> {{ reserva.precio_original_cabania}}</p>
-                        <p><strong>Cantidad Dias: </strong>{{ cantidad_dias }}</p>
-                        <p><strong>Total Cabaña: </strong>{{ total_cabania }}</p>
-                        <p><strong>Total Servicios x Dia: </strong>{{ total_servicios }}</p>
-                        <p><strong>Total Servicios x reserva: </strong>{{ total_servicios_reserva}}</p>
-                        
-                        <div><p><strong>Total Reserva: </strong>{{total_reserva}}</p></div>
+        <div class="totales" data-precio-cabania="{{ reserva.precio_original_cabania }}" data-cantidad-dias="{{ cantidad_dias }}" data-total-servicios="{{ total_servicios }}">
+            <h1>Totales</h1>
+            <p><strong>Precio Cabaña: </strong> <span id="precio_cabania">{{ reserva.precio_original_cabania }}</span></p>
+            <p><strong>Cantidad Dias: </strong> <span id="cantidad_dias">{{ cantidad_dias }}</span></p>
+            <p><strong>Total Cabaña: </strong> <span id="total_cabania">{{ total_cabania }}</span></p>
+            <p><strong>Total Servicios x Dia: </strong> <span id="total_servicios">{{ total_servicios }}</span></p>
+            <p><strong>Total Servicios x reserva: </strong> <span id="total_servicios_reserva">{{ total_servicios_reserva }}</span></p>
+            <p><strong>Total Reserva: </strong> <span id="total_reserva">{{ total_reserva }}</span></p>
+
         </div>
+        
+
+        <a href="{% url 'nuevo_cliente' %}?from_reserva=true&next={% url 'nuevo_reserva' %}">Agregar Cliente</a>
+
+
 
         <div class="contenedorBotones1">
             <button class="botonSecundario" type="submit">Guardar</button>
@@ -94,6 +99,7 @@
         });
     });
 </script>
+
 
 
 

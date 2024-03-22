@@ -1,0 +1,21 @@
+{% include 'navbar.html' %}
+{% load static %}
+{% block content %}
+
+<div class="contenedorConf">
+
+    <div class="confBorrar">
+        <h1>Crear Cliente</h1>
+
+        <p> El cliente no existe. ¿Desea crear?</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="contenedorBotones">
+                <a href="/clientes/clienteNuevo/">Aceptar</a>
+                <a href="{% url 'nuevo_reserva' %}" >Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

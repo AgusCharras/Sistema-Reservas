@@ -1,0 +1,18 @@
+{% include 'navbar.html' %}
+{% load static %}
+{% block content %}
+
+<div class="contenedorConf">
+
+    <div class="confBorrar">
+        <h1>Validación de Reserva</h1>
+
+        <div class="mensaje-error">
+            <p>No es posible realizar esta reserva ya que existe ocupación en estas fechas.</p>
+            <a href="reserva/reservaNuevo" class="botonSecundario">Aceptar</a>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

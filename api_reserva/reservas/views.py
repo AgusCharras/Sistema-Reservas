@@ -376,8 +376,21 @@ class nuevo_cliente(LoginRequiredMixin, CreateView):
     model = Cliente
     form_class = formCliente
     template_name = 'form_cliente.html'
-    success_url = reverse_lazy('lista_clientes')
+    #success_url = reverse_lazy('lista_clientes')
 
+    def form_valid(self, form):
+        self.object = form.save()
+        next_url = self.request.GET.get('next')
+        if self.request.GET.get('from_reserva'):
+            # Redirigir de vuelta al formulario de reserva después de guardar el cliente
+            return HttpResponseRedirect(next_url or reverse('nuevo_reserva'))
+        elif self.request.GET.get('from_lista'):
+            # Redirigir de vuelta a la lista de clientes después de guardar el cliente
+            return HttpResponseRedirect(reverse('lista_clientes'))
+        else:
+            # Si no se especifica ninguna fuente, redirigir al formulario de reserva por defecto
+            return HttpResponseRedirect(next_url or reverse('nuevo_reserva'))
+        
 class modif_cliente(LoginRequiredMixin, UpdateView):
     login_url = '/login/'
     model = Cliente
@@ -559,6 +572,7 @@ class nuevo_reserva(LoginRequiredMixin, CreateView):
         cliente_apellido_nombre = form.cleaned_data.get('cliente_apellido_nombre')
         cliente = Cliente.objects.filter(apellido_nombre=cliente_apellido_nombre).first()
 
+
         if cliente:
             reserva = form.save(commit=False)
             reserva.cliente = cliente
@@ -579,12 +593,14 @@ class nuevo_reserva(LoginRequiredMixin, CreateView):
                         servicio_reserva = servicio_form.save(commit=False)
                         servicio_reserva.precio_original_servicio = servicio_reserva.servicio.precio
                         servicio_reserva.save()
-
+            
                 return super().form_valid(form)
         else:
-            form.add_error('cliente_apellido_nombre', 'Cliente no encontrado')
-            return self.form_invalid(form)
-        
+            dato_formulario = form.cleaned_data
+            return render(self.request, "validar_reserva_clienteNoExistente.html", {'dato_formulario': dato_formulario})
+            #form.add_error('cliente_apellido_nombre', 'Cliente no encontrado')
+            #return self.form_invalid(form)
+                
     def total(self):
         """
         Calcula los totales relacionados con la reserva.
@@ -619,7 +635,6 @@ class nuevo_reserva(LoginRequiredMixin, CreateView):
         }
 
         return context
-        
 class modif_reserva(LoginRequiredMixin, UpdateView):
     """
     Vista para modificar una reserva existente.
@@ -827,6 +842,7 @@ def Logout(request):
     return redirect('/')
 from django.http import JsonResponse
 
+from django.http import JsonResponse
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
@@ -835,18 +851,23 @@ from reportlab.pdfbase import pdfmetrics
 from django.shortcuts import get_object_or_404
 import io
 from django.http import FileResponse
+from django.utils import timezone
+
 
 def factura(request, reserva_id):
     reserva = get_object_or_404(Reserva, id=reserva_id)
+    #encargado = get_object_or_404(Encargado,id=encargado_id)
 
     buf = io.BytesIO()
     c = canvas.Canvas(buf, pagesize=letter)
 
-    # Registro de la fuente
-    pdfmetrics.registerFont(TTFont('Poppins', 'reservas/static/fonts/Poppins-Regular.ttf'))
+    # Registro de las fuentes
+    pdfmetrics.registerFont(TTFont('Poppins', 'reservas/static/fonts/Poppins-Regular.ttf')),
+    pdfmetrics.registerFont(TTFont('Lexend-VariableFont_wght', 'reservas/static/fonts/Lexend-VariableFont_wght.ttf')),
+    pdfmetrics.registerFont(TTFont('Poppins-Bold', 'reservas/static/fonts/Poppins-Bold.ttf'))
 
     # Configuración de la fuente y márgenes
-    c.setFont("Poppins", 12)
+    c.setFont("Lexend-VariableFont_wght", 35)
     line_height = 14
     left_margin = inch
     top_margin = inch * 10
@@ -857,31 +878,102 @@ def factura(request, reserva_id):
     mitad2 = palabra[len(palabra)-3:]
 
     c.setFillColorRGB(0,0,0)  # Color negro para la primera mitad
-    c.drawString(250, 750, mitad1)
+    c.drawString(left_margin -60, 750, mitad1)
+    c.setFillColorRGB(0.57, 0.5, 1)  #Color púrpura para la segunda mitad
+    c.drawString(left_margin +35, 750, mitad2)
 
-    c.setFillColorRGB(147, 128, 255)  # Color azul para la segunda mitad
-    c.drawString(283, 750, mitad2)
-
-    # Datos del complejo y cabaña
+    # Ubicación
     c.setFillColorRGB(0, 0, 0)
-    complejo_cabania = f"Complejo: {reserva.complejo}   Cabaña: {reserva.cabania}"
-    c.drawString(left_margin, 700, complejo_cabania)
+    c.setFont( "Poppins", 20)
+    ubicacion = f"Domicilio: {reserva.complejo.direccion}"
+    top_margin -= line_height  # Ajusta la posición vertical
+    c.drawString(left_margin -60, top_margin - 20, ubicacion)
+
+    # Datos del complejo
+    c.setFillColorRGB(0, 0 , 0)
+    complejo_cabania = f"Complejo: {reserva.complejo}"
+    top_margin -= line_height
+    left_margin  -= 50
+    c.setFont("Poppins", 20)
+    c.drawString(left_margin -10  , top_margin -35 , complejo_cabania)
+
+    #Telefono y correo electrónico
+    telefono_encargado = f"Tel: +54 {str(reserva.complejo.encargado.telefono)}"
+    email_encargado = f"{reserva.complejo.encargado.email}"
+    top_margin -= line_height
+    c.setFont( "Poppins", 18)
+    c.drawRightString(left_margin +580, top_margin - 25, telefono_encargado)
+    top_margin -= line_height
+    c.setFillColorRGB(0.07, 0.33, 0.74)   #Color azul para el mail
+    c.drawRightString(left_margin +580, top_margin - 30, email_encargado)
+
+    #Línea divisoria superior "FACTURA"
+    c.setFillColorRGB(0.57, 0.5, 1)  # Púrpura
+    c.rect(left_margin, top_margin - 60, 570, 20, fill=True)
+
+    # Dibujar el título "FACTURA" encima de la barra horizontal
+    c.setFillColorRGB(0, 0, 0)  # Color blanco para el texto
+    c.setFont("Poppins-Bold", 18)  # Fuente en negrita y tamaño 18
+    c.drawString(left_margin + 240, top_margin - 57, "FACTURA")
+
+    c.setLineWidth(1)  # Ajusta el ancho de la línea según sea necesario
+    c.line(left_margin + 280, top_margin - 405, left_margin + 280, top_margin - 65)  
 
     # Detalles de la reserva
-    detalles = [
-        f"Cliente: {reserva.cliente}",
+    detalles_cabania = [
+        f"Cabaña: {reserva.cabania}",
+        f"Capacidad: {reserva.cabania.capacidad} personas",
         f"Día de Entrada: {reserva.diaEntrada}",
         f"Día de Salida: {reserva.diaSalida}",
-        f"Seña: {reserva.seña}"
-    ]
+        f"Seña: ${reserva.seña}",
+]
 
+    detalles_cliente = [
+        f"Cliente: {reserva.cliente}",
+        f"Teléfono: {reserva.cliente.telefono}",
+        f"Provincia: {reserva.cliente.provincia}",
+        f"Localidad : {reserva.cliente.localidad}",
+]
+    
     # Posición inicial para los detalles de la reserva
     top_margin -= 100
+    
+# Espaciado uniforme para los detalles de cabaña
+    line_height_detalles = 20
+# Espaciado para el encabezado    
+    line_height_encabezado = 30
 
-    # Dibujar detalles de la reserva
-    for detalle in detalles:
-        c.drawString(left_margin, top_margin, detalle)
-        top_margin -= line_height
+# Dibujar detalles de cabaña
+    c.setFont("Poppins", 20)
+    c.setFillColorRGB(0, 0, 0)
+    c.drawString(left_margin + 20, top_margin, "Detalle de Reserva")
+    top_margin -= line_height_encabezado
+
+    for detalle in detalles_cabania:
+        c.setFont("Poppins", 14)
+        c.drawString(left_margin + 10, top_margin, detalle)
+        top_margin -= line_height_detalles +5
+
+    line_height_encabezadoCL = 35
+
+# Dibujar detalles del cliente
+    c.setFont("Poppins", 20)
+    c.drawString(left_margin + 20, top_margin - 25, "Datos del Cliente")
+    top_margin -= line_height_encabezadoCL
+
+    for detalle in detalles_cliente:
+        c.setFont("Poppins", 14)
+        c.drawString(left_margin + 10, top_margin - 20, detalle)
+        top_margin -= line_height_detalles +5
+
+    detalle_width = 570
+
+    # Línea divisoria entre 'Datos del Cliente' y 'Cliente'
+    c.line(left_margin, top_margin +140, left_margin + detalle_width -300, top_margin +140)
+    
+    #Línea divisoria final
+    c.line(left_margin, top_margin -20, left_margin + detalle_width, top_margin -20)
+
 
     # Cálculos de precios y total de reserva
     cabania = reserva.cabania.precio
@@ -901,17 +993,28 @@ def factura(request, reserva_id):
     total_reserva = total_cabania + total_servicios_reserva
 
     # Mostrar totales
-    c.drawString(left_margin, top_margin - 30, f"total de los servicios por dia: {total_servicios}")
-    c.drawString(left_margin, top_margin - 50, f"Total servicios de la reserva: {total_servicios_reserva}")
-    c.drawString(left_margin, top_margin - 70, f"Total reserva: {total_reserva}")
-
+    line_height_totales = -300
+    totales = "Total Reserva"
+    top_margin -= line_height_totales # Ajusta la posición vertical
+    numero_reserva = reserva_id #Numero de factura igual al id de la reserva
+    c.setFont("Poppins", 20)
+    c.drawString(left_margin +360, top_margin - 90, totales) 
+    c.setFont("Poppins", 14)
+    c.drawString(left_margin +320, top_margin -130, f"Total Servicios/Día: ${total_servicios}")
+    c.drawString(left_margin +320, top_margin -160, f"Total Servicios/Reserva: ${total_servicios_reserva}")
+    c.drawString(left_margin +320, top_margin -190, f"Total Cabaña: ${total_cabania}")
+    c.setFont("Poppins-Bold",14)
+    c.drawString(left_margin +360, top_margin -220, f"Total: ${total_reserva}")
+    c.setFont("Poppins-Bold",16)
+    fecha_actual = timezone.now().strftime("%Y-%m-%d")
+    c.drawString(left_margin, top_margin - 375, f"N° Factura : {numero_reserva}")
+    c.drawString(left_margin, top_margin - 395, f"Fecha: {fecha_actual}")
+    c.drawString(left_margin, top_margin - 425, "Gracias por su visita!")
     c.showPage()
     c.save()
     buf.seek(0)
 
     return FileResponse(buf, as_attachment=True, filename=f'reserva{reserva_id}_factura.pdf')
-
-
 
 
 def search_clients(request):

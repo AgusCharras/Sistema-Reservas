@@ -34,7 +34,7 @@
             <td><a href="{% url 'detalle_complejo' complejo.id %}">{{ complejo.nombre }}</a></td>
             <td>{{ complejo.direccion }}</td>
             <td>{{ complejo.encargado}}</td>
-            <td class="d-flex justify-content-end align-items-end"><a class="botonSecundario" href="/complejos/complejoModif/{{ complejo.id }}"> Modificar</td>
+            <td class="d-flex justify-content-end align-items-end"><a class="botonTerciario" href="/complejos/complejoModif/{{ complejo.id }}"> Modificar</td>
                 <td><a class="botonSecundario" href="/complejos/complejoBorrar/{{ complejo.id }}">Borrar</a></td>
         {% endfor %} 
     </tbody>

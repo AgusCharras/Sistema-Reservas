@@ -1,20 +1,35 @@
 {% extends "base.html" %}
 {% block content %}
 
-
 <div class="contenedorLogin {% if modoNocturnoGuardado == 'activado' %}dark-mode{% endif %}">
     <div class="login-card">
-        <h3 class="col display-4 my-3">Login</h3>
+        <div class="ReserVas">
+            <h1>Reser<span>Vas</span></h1>
+        </div>
+        <h3><strong>LOGIN</strong></h3>
         <form action="" method="POST">
             {% csrf_token %}
-            <div class="mb-3">
-                <label for="username" class="form-label">Usuario:</label>
+
+            <div class="input-login">
+
+                <label for="username" class="form-label">
+                    <span class="material-symbols-outlined">
+                        person
+                    </span>
+                    Usuario:
+                </label>
                 <input type="text" class="form-control" id="username" name="username">
             </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password:</label>
+
+            <div class="input-login">
+                <label for="password" class="form-label">
+                    <span class="material-symbols-outlined">
+                        password
+                    </span>
+                    Password:</label>
                 <input type="password" class="form-control" id="password" name="password">
             </div>
+
             <button type="submit" class="botonPrimario" id="ingresar" >Ingresar</button>
         </form>
     </div>

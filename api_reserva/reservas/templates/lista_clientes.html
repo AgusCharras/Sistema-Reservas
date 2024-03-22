@@ -14,7 +14,7 @@
                 <input type="text" id="search" class="form-control inputApagado" name="q" value="{{ query }}" placeholder="Buscar Cliente...">
                 <button class="lupa" type="submit"><span class="material-symbols-outlined">search</span></button>
                 
-                <div class="d-flex justify-content-end align-items-end"><a class="botonPrimario" href="/clientes/clienteNuevo/">Añadir Cliente</a></div>
+                <div class="d-flex justify-content-end align-items-end"><a class="botonPrimario" href="{% url 'nuevo_cliente' %}?from_lista=true">Añadir Cliente</a></div>
         </form>
     </div>
 </div>
@@ -40,7 +40,7 @@
                 <td>{{ cliente.pais }}</td>
                 <td>{{ cliente.provincia }}</td>
                 <td>{{ cliente.localidad }}</td>
-                <td class="d-flex justify-content-end align-items-end"><a class="botonSecundario" href="/clientes/clienteModif/{{ cliente.id }}"> Modificar</td>
+                <td class="d-flex justify-content-end align-items-end"><a class="botonTerciario" href="/clientes/clienteModif/{{ cliente.id }}"> Modificar</td>
                 <td><a class="botonSecundario" href="/clientes/clienteBorrar/{{ cliente.id }}">Borrar</a></td>
             {% endfor %} 
         </tbody>

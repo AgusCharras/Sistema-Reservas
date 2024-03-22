@@ -1,42 +1,129 @@
+{% extends 'base.html' %} 
 {% load static %} 
 {% block content %} 
 
-    {% include 'navbar.html' %} 
+<header class="headerMain">
+    <div class="ReserVas">
+        <h1>Reser<span>Vas</span></h1>
+    </div>
+    
+    <div class="mainConfig">
+        <button type="button" class="btn dark-mode">
+            <span class="material-symbols-outlined" id="botonDarkMode">
+                contrast
+            </span>
+        </button>
+
+        <div>
+            {% if request.user.is_authenticated %}
+            <h4 class="user">{{ request.user.username }}</h4>
+            <a href="/logout/">Logout</a>
+            {% else %}
+            <a href="/login/">Login</a>
+            {% endif %}
+        </div>
+    </div>
+
+</header>
 
 <div class="contenedorCard">
 
-    <div class="maincard" id="card1">
-        <h1>Gestiona</h1>
-        <span class="material-symbols-outlined">
-            monitoring
-        </span>
-    </div>
+    <a href="/reservas">
+        <div class="maincard" >
+            <div class="logos">
+                <span class="material-symbols-outlined">
+                    event_available
+                </span>
+                <h1>Reservar</h1>
+            </div>
+            <div class="descripcion">
+                <p> Ver reservas, registrar nuevas reservas, modificar reservas existentes, eliminar Reservas.</p>
+            </div>
+        </div>
+    </a>
 
     <a href="{% url 'cabanias_disponibles' %}">
-    <div class="maincard" id="card2">
-        <h1>Ocupacion</h1>
-        <span class="material-symbols-outlined">
-            calendar_month
-        </span>
-    </div>
+        <div class="maincard" >
+            <div class="logos">
+                <span class="material-symbols-outlined">
+                    calendar_month
+                </span>
+                <h1>Ocupacion</h1>
+            </div>
+            <div class="descripcion">
+                <p> Buscar cabañas disponibles para un periodo especifico de tiempo. </p>
+            </div>
+        </div>
     </a>
 
-    <a href="">
-    <div class="maincard" id="card3">
-        <h1>Clientes</h1>
-        <span class="material-symbols-outlined">
-            groups
-        </span>
-    </div>
+    <a href="/clientes">
+        <div class="maincard" >
+            <div class="logos">
+                <span class="material-symbols-outlined">
+                    groups
+                </span>
+                <h1>Clientes</h1>
+            </div>
+            <div class="descripcion">
+                <p> Ver clientes, registrar nuevos clientes, modificar clientes existentes, eliminar clientes.</p>
+            </div>  
+        </div>
     </a>
 
-    <a href="">
-    <div class="maincard" id="card4">
-        <h1>Hospedaje</h1>
-        <span class="material-symbols-outlined">
-            home
-        </span>
-    </div>
+    <a href="/encargados">
+        <div class="maincard" >
+            <div class="logos">
+                <span class="material-symbols-outlined">
+                    person
+                </span>
+                <h1>Encargados</h1>
+            </div>
+            <div class="descripcion">
+                <p> Ver encargados, registrar nuevos encargados, modificar encargados existentes, eliminar encargados.</p>
+            </div>  
+        </div>
+    </a>
+
+    <a href="/complejos">
+        <div class="maincard" >
+            <div class="logos">
+                <span class="material-symbols-outlined">
+                    other_houses
+                </span>
+                <h1>Complejos</h1>
+            </div>
+            <div class="descripcion">
+                <p> Ver complejos, registrar nuevos complejos, modificar complejos existentes, eliminar complejo.</p>
+            </div>      
+        </div>
+    </a>
+
+    <a href="/cabanias">
+        <div class="maincard" >
+            <div class="logos">
+                <span class="material-symbols-outlined">
+                    home
+                </span>
+                <h1>Cabañas</h1>
+            </div>
+            <div class="descripcion">
+                <p> Ver cabañas, registrar nuevas cabañas, modificar cabañas existentes, eliminar cabañas.</p>
+            </div>  
+        </div>
+    </a>
+
+    <a href="/servicios">
+        <div class="maincard" >
+            <div class="logos">
+                <span class="material-symbols-outlined">
+                    local_cafe
+                </span>
+                <h1>Servicios</h1>
+            </div>
+            <div class="descripcion">
+                <p> Ver servicios, registrar nuevos servicios, modificar servicios existentes, eliminar servicios.</p>
+            </div>  
+        </div>
     </a>
 </div>
 {% endblock %} 

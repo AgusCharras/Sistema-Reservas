@@ -4,7 +4,7 @@
 <div class="contenedor">
 
  <div class="row">
-    <h1 class="col display-4 my-3">>Reservas</h1>
+    <h1 class="col display-4 my-3">Reservas</h1>
 
     <div class=" col d-flex justify-content-end align-items-end mb-3">
         <form method="GET">
@@ -39,7 +39,7 @@
                 <td>{{ reserva.diaSalida }}</td>
                 <td>{{ reserva.seña }}</td>
                 <td class="d-flex justify-content-end align-items-end">
-                    <a class="botonSecundario" href="/reservas/reservaModif/{{ reserva.id }}">Modificar</a>
+                    <a class="botonTerciario" href="/reservas/reservaModif/{{ reserva.id }}">Modificar</a>
                     <a class="botonSecundario" href="/reservas/reservaBorrar/{{ reserva.id }}">Borrar</a>
                 </td>
             </tr>

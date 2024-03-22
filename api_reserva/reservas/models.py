@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from datetime import timedelta
 
 # Create your models here.
 
@@ -62,6 +63,7 @@ class Reserva(models.Model):
     def __str__(self):
         return self.cliente.apellido_nombre
     
+    
     def clean(self):
         # Llamamos al método clean de la clase padre para mantener las validaciones predeterminadas
         super().clean()
@@ -69,13 +71,17 @@ class Reserva(models.Model):
         # Verificamos si hay reservas existentes con la misma cabaña y fechas superpuestas
         reservas_superpuestas = Reserva.objects.filter(
             cabania=self.cabania,
-            diaEntrada__lte=self.diaSalida,
-            diaSalida__gte=self.diaEntrada
-        ).exclude(id=self.id)  # Excluimos la reserva actual si ya existe
+            diaEntrada__lte =self.diaSalida, 
+            diaSalida__gte=self.diaEntrada + timedelta(days=1)
+        ).exclude(id=self.id)
 
         if reservas_superpuestas.exists():
             raise ValidationError('Ya hay una reserva existente para esta cabaña en estas fechas.')
+        
+        if self.diaEntrada > self.diaSalida:
+            raise ValidationError('La fecha de entrada no puede ser posterior a la fecha de salida.')
     
+
     def save(self, *args, **kwargs):
         # Verificar si el objeto ya existe en la base de datos
         if self.pk is None:

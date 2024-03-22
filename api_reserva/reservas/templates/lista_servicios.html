@@ -32,7 +32,7 @@
             <td><a href="{% url 'detalle_servicio' servicio.id %}">{{ servicio.nombre }}</a></td>
             <td>{{ servicio.descripcion }}</td>
             <td>{{ servicio.precio }}</td>
-            <td class="d-flex justify-content-end align-items-end"><a class="botonSecundario" href="/servicios/servicioModif/{{ servicio.id }}">Modificar</a></td>
+            <td class="d-flex justify-content-end align-items-end"><a class="botonTerciario" href="/servicios/servicioModif/{{ servicio.id }}">Modificar</a></td>
             <td><a class="botonSecundario" href="/servicios/servicioBorrar/{{ servicio.id }}">Borrar</a></td>
         {% endfor %} 
     </tbody>
