@@ -15,6 +15,7 @@ urlpatterns = [
     path('clientes/', views.lista_clientes.as_view(), name='lista_clientes'),
     path('clientes/<int:cliente_id>/', views.detalle_cliente, name='detalle_cliente'),
     path('clientes/clienteNuevo/', views.nuevo_cliente.as_view(), name='nuevo_cliente'),
+    path('clientes/nuevo_cliente_modif/', views.nuevo_cliente_modif.as_view(), name='nuevo_cliente_modif'),
     path('clientes/clienteModif/<int:pk>/', views.modif_cliente.as_view(), name='modif_cliente'),
     path('clientes/clienteBorrar/<int:pk>/', views.borrar_cliente.as_view(), name='borrar_cliente'),
 
@@ -39,6 +40,7 @@ urlpatterns = [
     path('reservas/', views.lista_reservas.as_view(), name='lista_reservas'),
     path('reservas/<int:reserva_id>/', views.detalle_reserva, name='detalle_reserva'),
     path('reservas/reservaNuevo/', views.nuevo_reserva.as_view(), name='nuevo_reserva'),
+    path('reservas/nuevo_reserva_modif/<int:cliente_id>/', views.nuevo_reserva_modif.as_view(), name='nuevo_reserva_modif'),
     path('reservas/reservaModif/<int:pk>/', views.modif_reserva.as_view(), name='modif_reserva'),
     path('reservas/reservaBorrar/<int:pk>/', views.borrar_reserva.as_view(), name='borrar_reserva'),
 

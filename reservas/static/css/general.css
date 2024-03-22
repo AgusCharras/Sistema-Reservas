@@ -322,6 +322,11 @@ table a:hover{
     font-family: 'poppins', sans-serif;
 }
 
+.col.display-5.my-4{
+    color: var(--color-dark);
+
+}
+
 /* formularios */
 
 .contenedorForm{
@@ -575,7 +580,7 @@ label {
 
 .login-card button{
     position: relative;
-    margin-left: 24vw;
+    margin-left: 25vw;
 }
 
 .login-card h3{
@@ -622,13 +627,14 @@ label {
     flex-direction: column;
 }
 
-.contenedorUsuario div a{
+.contenedorUsuario div a {
     text-decoration: none;
     color: var(--color-dark);
     transition: ease .8s;
     margin-top: -1rem;
     font-size: .7rem;
 }
+
 
 .contenedorUsuario div a:hover{
     text-decoration: none;

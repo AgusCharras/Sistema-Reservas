@@ -7,7 +7,7 @@
 <div class="contenedor">
     
     <h1>Disponibilidad</h1>
-        <div class="d-flex justify-content-end align-items-end"><a class="botonPrimario" href="{% url 'nuevo_reserva' %}?disponibilidad-cabania={{ cabania_id }}">Añadir Reserva</a></div> 
+        <div class="d-flex justify-content-end align-items-end"><a class="botonPrimario" href="{% url 'nuevo_reserva' %}?cabania_id={{ cabania.id }}">Añadir Reserva</a></div> 
     <div id="calendario"></div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -23,7 +23,7 @@
                     {% endfor %}
                 ],
                 // Otras opciones de configuración aquí...
-                locale: 'es', // Cambiar a español
+                locale: 'Es-es', // Cambiar a español
             });
 
             calendar.render();

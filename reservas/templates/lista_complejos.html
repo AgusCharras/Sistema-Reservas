@@ -31,7 +31,7 @@
     <tbody>
         {% for complejo in complejos %} 
         <tr class="filas">
-            <td><a href="{% url 'detalle_complejo' complejo.id %}">{{ complejo.nombre }}</a></td>
+            <td style="color: #9381ff;">{{ complejo.nombre }}</td>
             <td>{{ complejo.direccion }}</td>
             <td>{{ complejo.encargado}}</td>
             <td class="d-flex justify-content-end align-items-end"><a class="botonSecundario" href="/complejos/complejoModif/{{ complejo.id }}">Modificar</a></td>

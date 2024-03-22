@@ -15,6 +15,7 @@ from django.http import HttpResponse
 from datetime import datetime
 from datetime import timedelta
 from django.forms import inlineformset_factory
+from django.contrib.sessions.models import Session
 
 # Create your views here.
 
@@ -379,6 +380,18 @@ class nuevo_cliente(LoginRequiredMixin, CreateView):
     template_name = 'form_cliente.html'
     success_url = reverse_lazy('lista_clientes')
 
+class nuevo_cliente_modif(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    model = Cliente
+    form_class = formCliente
+    template_name = 'form_cliente_modif.html'
+    success_url = reverse_lazy('nuevo_reserva_modif')
+
+    def form_valid(self, form):
+        cliente = form.save()  # Guardar el cliente
+        # Redirigir a nuevo_reserva_modif con el ID del cliente como parámetro
+        return redirect('nuevo_reserva_modif', cliente_id=cliente.pk)
+
 class modif_cliente(LoginRequiredMixin, UpdateView):
     login_url = '/login/'
     model = Cliente
@@ -498,6 +511,7 @@ def obtener_id_cliente(apellido_nombre):
         return cliente.id
     except Cliente.DoesNotExist:
         return None
+    
 class nuevo_reserva(LoginRequiredMixin, CreateView):
     """
     Vista para crear una nueva reserva.
@@ -583,9 +597,34 @@ class nuevo_reserva(LoginRequiredMixin, CreateView):
 
                 return super().form_valid(form)
         else:
-            form.add_error('cliente_apellido_nombre', 'Cliente no encontrado')
-            return self.form_invalid(form)
+            #form.add_error('cliente_apellido_nombre', 'Cliente no encontrado')
+
+            #return self.form_invalid(form)
         
+            datos_formulario = form.cleaned_data
+            return render(self.request, 'validar_reserva_clienteNoExistente.html', {'datos_formulario': datos_formulario})
+
+class nuevo_reserva_modif(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    model = Reserva
+    form_class = formReserva
+    template_name = 'form_reserva_modif.html'
+
+    def get_initial(self):
+        initial = super().get_initial()
+        cliente_id = self.kwargs.get('cliente_id')  # Obtener el ID del cliente de la URL
+        if cliente_id:
+            initial['cliente'] = cliente_id  # Predefinir el campo de cliente con el ID del cliente
+        return initial
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        datos_reserva = self.request.session.get('datos_reserva')
+        if datos_reserva:
+            form.initial = datos_reserva
+            self.request.session.pop('datos_reserva')  # Limpiar los datos de la sesión después de recuperarlos
+        return form
+
     def total(self):
         """
         Calcula los totales relacionados con la reserva.
