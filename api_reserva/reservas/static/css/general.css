@@ -239,6 +239,10 @@ header span{
     box-shadow: 0.05rem 0.05rem 1rem var(--color-Terciary);
 }
 
+form .botonTerciario{
+    margin-left: 15rem;
+}
+
 .lupa{
     color: var(--color-dark);
     background-color: var(--color-white);
@@ -918,6 +922,10 @@ a:link, a:visited, a:active{
 
     .totales{
         width: 30rem;
+    }
+
+    form .botonTerciario{
+        margin-left: 4.7rem;
     }
 }
 

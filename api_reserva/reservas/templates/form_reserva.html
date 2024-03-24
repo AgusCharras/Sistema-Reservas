@@ -13,6 +13,7 @@
                     {{form.as_p}}
         
                     {{ formset.management_form }}
+                    <a class="botonTerciario" href="{% url 'nuevo_cliente' %}?from_reserva=true&next={% url 'nuevo_reserva' %}">Nuevo Cliente</a>
         </div>
 
         <div class="setformServicio" id="formset-container">
@@ -45,14 +46,9 @@
             <p><strong>Total Servicios x Dia: </strong> <span id="total_servicios">{{ total_servicios }}</span></p>
             <p><strong>Total Servicios x reserva: </strong> <span id="total_servicios_reserva">{{ total_servicios_reserva }}</span></p>
             <p><strong>Total Reserva: </strong> <span id="total_reserva">{{ total_reserva }}</span></p>
-
+            
         </div>
         
-
-        <a href="{% url 'nuevo_cliente' %}?from_reserva=true&next={% url 'nuevo_reserva' %}">Agregar Cliente</a>
-
-
-
         <div class="contenedorBotones1">
             <button class="botonSecundario" type="submit">Guardar</button>
             <a class="botonSecundario" href="{% url 'lista_reservas' %}">Cancelar</a>
@@ -73,7 +69,6 @@
         source: "{% url 'search_clients' %}",
     });
 </script>
-
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -99,8 +94,5 @@
         });
     });
 </script>
-
-
-
 
 {% endblock %} 

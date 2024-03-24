@@ -395,7 +395,7 @@ class modif_cliente(LoginRequiredMixin, UpdateView):
     login_url = '/login/'
     model = Cliente
     form_class = formCliente
-    template_name = 'form_complejo.html'
+    template_name = 'form_cliente.html'
     success_url = reverse_lazy('lista_clientes')
 
 class borrar_cliente(LoginRequiredMixin, DeleteView):
